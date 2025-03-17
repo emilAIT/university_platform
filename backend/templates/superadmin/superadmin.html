@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Super Admin Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            background-color: #333;
+            padding: 15px;
+            color: white;
+        }
+        .navbar-brand {
+            font-size: 24px;
+            color: white;
+            text-decoration: none;
+            margin-right: 20px;
+        }
+        .content-area {
+            display: flex;
+            margin-top: 20px;
+        }
+        .nav-bottoms {
+            width: 200px;
+            padding: 10px;
+        }
+        .info-panel {
+            flex-grow: 1;
+            padding: 20px;
+            border-left: 1px solid #ccc;
+            min-height: 500px;
+        }
+        .nav-bottom {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .nav-bottom:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <span class="navbar-brand">University Management</span>
+    </div>
+
+    <div class="content-area">
+        <div class="nav-bottoms">
+            <button class="nav-bottom" onclick="window.location.href='/universities'">Universities</button>
+            <button class="nav-bottom" onclick="window.location.href='/register-university-page'">Register University</button>
+            <button class="nav-bottom" onclick="window.location.href='/mandatory-courses'">Mandatory Courses</button>
+        </div>
+
+        <div class="info-panel" id="content-panel">
+            <h2>Welcome to University Management System</h2>
+            <p>Please select an option from the navigation menu on the left to get started.</p>
+            <p>This system allows you to:</p>
+            <ul>
+                <li>View all universities and their details</li>
+                <li>Register new universities with custom requirements</li>
+                <li>Manage mandatory courses that all universities must include</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+         function loadPage(url) {
+            window.location.href = url;
+        }
+    </script>
+</body>
+</html>

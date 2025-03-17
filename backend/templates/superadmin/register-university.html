@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register University | Super Admin Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            background-color: #333;
+            padding: 15px;
+            color: white;
+        }
+        .navbar-brand {
+            font-size: 24px;
+            color: white;
+            text-decoration: none;
+            margin-right: 20px;
+        }
+        .content-area {
+            display: flex;
+            margin-top: 20px;
+        }
+        .nav-bottoms {
+            width: 200px;
+            padding: 10px;
+        }
+        .info-panel {
+            flex-grow: 1;
+            padding: 20px;
+            border-left: 1px solid #ccc;
+            min-height: 500px;
+        }
+        .nav-bottom {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .nav-bottom:hover {
+            background-color: #45a049;
+        }
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .form-section {
+            background-color: #f9f9f9;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        .submit-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .submit-button:hover {
+            background-color: #45a049;
+        }
+        .success-message {
+            background-color: #dff0d8;
+            color: #3c763d;
+            padding: 10px;
+            margin: 20px 0;
+            border-radius: 4px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <span class="navbar-brand">University Management</span>
+    </div>
+
+    <div class="content-area">
+        <div class="nav-bottoms">
+            <button class="nav-bottom" onclick="window.location.href='/universities'">Universities</button>
+            <button class="nav-bottom" onclick="window.location.href='/register-university-page'">Register University</button>
+            <button class="nav-bottom" onclick="window.location.href='/mandatory-courses'">Mandatory Courses</button>
+        </div>
+
+        <div class="info-panel">
+            <h2>Register New University</h2>
+            
+            <div class="form-container">
+                <div class="success-message" id="successMessage">
+                    University registered successfully!
+                </div>
+                
+                <form id="universityForm">
+                    <div class="form-section">
+                        <h3>University Information</h3>
+                        <div class="form-group">
+                            <label for="universityName">University Name:</label>
+                            <input type="text" id="universityName" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="universityPassword">Password:</label>
+                            <input type="password" id="universityPassword" name="password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="universityType">Type:</label>
+                            <select id="universityType" name="type">
+                                <option value="public">Public</option>
+                                <option value="private">Private</option>
+                                <option value="community">Community</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h3>Requirements</h3>
+                        <div class="form-group">
+                            <label for="minCourses">Minimum Required Courses per Semester:</label>
+                            <input type="number" id="minCourses" name="minCourses" min="1" max="10" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="minGPA">Minimum GPA for Next Semester:</label>
+                            <input type="number" id="minGPA" name="minGPA" min="0" max="100" step="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="attendanceRate">Attendance Rate (%):</label>
+                            <input type="number" id="attendanceRate" name="attendanceRate" min="0" max="100" required>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="submit-button">Register University</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+         function loadPage(url) {
+            window.location.href = url;
+        }
+        document.getElementById('universityForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const formData = {
+                name: document.getElementById('universityName').value,
+                password: document.getElementById('universityPassword').value,
+                type: document.getElementById('universityType').value,
+                minCourses: parseInt(document.getElementById('minCourses').value),
+                minGPA: parseFloat(document.getElementById('minGPA').value),
+                attendanceRate: parseInt(document.getElementById('attendanceRate').value)
+            };
+
+            fetch('/register-university', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    document.getElementById('successMessage').style.display = 'block';
+                } else if (data.error) {
+                    alert(data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>

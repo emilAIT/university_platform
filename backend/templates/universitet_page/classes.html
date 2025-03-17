@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University Portal</title>
+    <style>
+        /* General Styles */
+        :root {
+            --primary-color: #1e3a8a;
+            --primary-light: #2563eb;
+            --primary-dark: #1e40af;
+            --secondary-color: #60a5fa;
+            --accent-color: #3b82f6;
+            --bg-color: #f0f9ff;
+            --text-color: #1e293b;
+            --text-light: #64748b;
+            --border-color: #cbd5e1;
+            --white: #ffffff;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: var(--white);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+        }
+
+        .navbar h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .nav-links a {
+            color: var(--white);
+            text-decoration: none;
+            margin-left: 24px;
+            font-size: 16px;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        /* Content Container Styles */
+        .content-container {
+            display: flex;
+            margin: 30px;
+            gap: 30px;
+        }
+
+        .left-bar {
+            width: 30%;
+            background-color: var(--white);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            border-top: 4px solid var(--primary-light);
+        }
+
+        .right-bar {
+            width: 70%;
+            background-color: var(--white);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            border-top: 4px solid var(--primary-light);
+        }
+
+        /* Headings */
+        h3 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-weight: 600;
+            font-size: 18px;
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 10px;
+        }
+
+        /* Button Styles */
+        button {
+            background-color: var(--primary-light);
+            color: var(--white);
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        button:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        /* List Styles */
+        .class-list {
+            margin-top: 20px;
+        }
+
+        .class-item {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f8fafc;
+            border-left: 4px solid var(--accent-color);
+            transition: all 0.3s ease;
+            border-bottom: none;
+        }
+
+        .class-item:hover {
+            background-color: #eff6ff;
+            transform: translateX(5px);
+            box-shadow: 0 2px 6px rgba(37, 99, 235, 0.1);
+        }
+
+        .delete-icon {
+            padding: 6px 10px;
+            cursor: pointer;
+            color: #ef4444;
+            border-radius: 4px;
+            font-size: 18px;
+            transition: all 0.2s ease;
+        }
+
+        .delete-icon:hover {
+            background-color: #fee2e2;
+            color: #dc2626;
+        }
+
+        .student-list {
+            margin-top: 20px;
+        }
+
+        .student-item {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            background-color: #f8fafc;
+            border-left: 4px solid var(--secondary-color);
+            border-bottom: none;
+        }
+
+        /* Form Styles */
+        input[type="text"], 
+        textarea, 
+        select {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus, 
+        textarea:focus, 
+        select:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--primary-dark);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background-color: var(--white);
+            margin: 10% auto;
+            padding: 30px;
+            border-radius: 12px;
+            width: 400px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .close {
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            color: var(--text-light);
+            transition: all 0.2s ease;
+        }
+
+        .close:hover {
+            color: var(--primary-dark);
+        }
+
+        /* Checkbox Styles */
+        input[type="checkbox"] {
+            margin-right: 8px;
+            transform: scale(1.2);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-light);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .content-container {
+                flex-direction: column;
+            }
+
+            .left-bar, .right-bar {
+                width: 100%;
+                margin-bottom: 20px;
+            }
+
+            .navbar {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .nav-links {
+                margin-top: 15px;
+            }
+
+            .nav-links a {
+                margin: 0 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1>University Portal</h1>
+        <div class="nav-links">
+            <a href="{{ url_for('students') }}">Students</a>
+            <a href="{{ url_for('professors') }}">Professors</a>
+            <a href="{{ url_for('classes') }}">Classes</a>
+        </div>
+    </div>
+
+    <div class="content-container">
+        <div class="left-bar">
+            <h3>Classes</h3>
+            <button onclick="openAddCourseModal()">Add Course</button>
+            <button onclick="openSpecifyMandatoryModal()">Specify Mandatory</button>
+            <div class="class-list" id="class-list">
+                <!-- Class list will be populated dynamically -->
+                <div class="empty-state">
+                    <p>Loading courses...</p>
+                </div>
+            </div>
+        </div>
+        <div class="right-bar" id="right-bar">
+            <h3>Select a class to view attending students</h3>
+            <div class="student-list" id="student-list">
+                <!-- Student list will be populated dynamically -->
+                <div class="empty-state">
+                    <p>No students selected</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Course Modal -->
+    <div id="addCourseModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeAddCourseModal()">&times;</span>
+            <h3>Add New Course</h3>
+            <form id="addCourseForm">
+                <label for="courseName">Course Name:</label>
+                <input type="text" id="courseName" name="courseName" required placeholder="e.g. Introduction to Computer Science">
+                
+                <label for="courseDescription">Description:</label>
+                <textarea id="courseDescription" name="courseDescription" required rows="4" placeholder="Course description and objectives"></textarea>
+                
+                <label for="teacherId">Teacher:</label>
+                <select id="teacherId" name="teacherId" required>
+                    <!-- Teachers will be populated dynamically -->
+                </select>
+                
+                <button type="button" onclick="addCourse()">Add Course</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Specify Mandatory Modal -->
+    <div id="specifyMandatoryModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeSpecifyMandatoryModal()">&times;</span>
+            <h3>Specify Mandatory Courses</h3>
+            <div id="mandatoryCoursesList">
+                <!-- Mandatory courses will be populated here -->
+                <div class="empty-state">
+                    <p>Loading mandatory courses...</p>
+                </div>
+            </div>
+            <label for="teacherSelect">Assign Professor:</label>
+            <select id="teacherSelect">
+                <!-- Teachers will be populated dynamically -->
+            </select>
+            <button onclick="assignMandatoryCourses()">Assign</button>
+        </div>
+    </div>
+
+    <script>
+        // Fetch courses from the backend
+        async function fetchCourses() {
+            const universityId = localStorage.getItem('university_id');
+            if (!universityId) {
+                console.error('University ID not found');
+                return [];
+            }
+
+            try {
+                const response = await fetch(`/courses?university_id=${universityId}`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch courses');
+                }
+                const courses = await response.json();
+                return courses;
+            } catch (error) {
+                console.error('Error:', error);
+                return [];
+            }
+        }
+
+        // Fetch students by course
+        async function fetchStudentsByCourse(courseId) {
+            try {
+                const response = await fetch(`/courses/${courseId}/students`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch students');
+                }
+                console.log(response)
+                const students = await response.json();
+                return students;
+            } catch (error) {
+                console.error('Error:', error);
+                return [];
+            }
+        }
+
+        // Fetch teachers by university ID
+        async function fetchTeachers() {
+            const universityId = localStorage.getItem('university_id');
+            if (!universityId) {
+                console.error('University ID not found');
+                return [];
+            }
+
+            try {
+                const response = await fetch(`/teachers/${universityId}`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch teachers');
+                }
+                const teachers = await response.json();
+                return teachers;
+            } catch (error) {
+                console.error('Error:', error);
+                return [];
+            }
+        }
+
+        // Display courses in the left bar
+        async function displayCourses() {
+            const classList = document.getElementById('class-list');
+            classList.innerHTML = '<div class="empty-state"><p>Loading courses...</p></div>';
+            
+            const courses = await fetchCourses();
+
+            if (courses.length === 0) {
+                classList.innerHTML = '<div class="empty-state"><p>No courses available</p></div>';
+                return;
+            }
+
+            let classListHTML = '';
+            courses.forEach(course => {
+                classListHTML += `
+                    <div class="class-item">
+                        <span onclick="displayStudents(${course.id})">${course.name}</span>
+                        <span class="delete-icon" onclick="deleteCourse(${course.id})">🗑️</span>
+                    </div>
+                `;
+            });
+
+            classList.innerHTML = classListHTML;
+        }
+
+        // Display students attending a specific course
+        async function displayStudents(courseId) {
+    let studentList = document.getElementById('student-list'); // Use 'let' instead of 'const'
+    const rightBar = document.getElementById('right-bar');
+    
+    rightBar.innerHTML = '<h3>Loading students...</h3><div class="student-list" id="student-list"><div class="empty-state"><p>Loading students...</p></div></div>';
+    
+    try {
+        const students = await fetchStudentsByCourse(courseId);
+        
+        // Get course details to update title
+        const courses = await fetchCourses();
+        const course = courses.find(c => c.id === courseId);
+        const courseName = course ? course.name : 'Selected Course';
+        
+        rightBar.innerHTML = `<h3>${courseName} - Attending Students</h3><div class="student-list" id="student-list"></div>`;
+        studentList = document.getElementById('student-list'); // Now this is allowed
+
+        if (students.length === 0) {
+            studentList.innerHTML = '<div class="empty-state"><p>No students attending this course.</p></div>';
+            return;
+        }
+
+        let studentListHTML = '';
+        students.forEach(student => {
+            studentListHTML += `
+                <div class="student-item">
+                    <h4>${student.username}</h4>
+                    <p>Grade: ${student.grade || 'No grade'}</p>
+                </div>
+            `;
+        });
+
+        studentList.innerHTML = studentListHTML;
+    } catch (error) {
+        console.error('Error:', error);
+        rightBar.innerHTML = `<h3>Error Loading Students</h3><div class="student-list"><div class="empty-state"><p>Failed to load student data. Please try again.</p></div></div>`;
+    }
+}
+
+        // Open the Add Course modal
+        async function openAddCourseModal() {
+            const teacherSelect = document.getElementById('teacherId');
+            teacherSelect.innerHTML = '<option value="">Loading teachers...</option>';
+            document.getElementById('addCourseModal').style.display = 'block';
+            
+            const teachers = await fetchTeachers();
+
+            let teacherOptionsHTML = '<option value="">Select a teacher</option>';
+            if (teachers.length === 0) {
+                teacherOptionsHTML = '<option value="">No teachers available</option>';
+            } else {
+                teachers.forEach(teacher => {
+                    teacherOptionsHTML += `
+                        <option value="${teacher.id}">${teacher.username}</option>
+                    `;
+                });
+            }
+
+            teacherSelect.innerHTML = teacherOptionsHTML;
+        }
+
+        // Close the Add Course modal
+        function closeAddCourseModal() {
+            document.getElementById('addCourseModal').style.display = 'none';
+        }
+
+        // Add a new course
+        async function addCourse() {
+            const courseName = document.getElementById('courseName').value.trim();
+            const courseDescription = document.getElementById('courseDescription').value.trim();
+            const teacherId = document.getElementById('teacherId').value;
+
+            if (!courseName || !courseDescription || !teacherId) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            const universityId = localStorage.getItem('university_id');
+            if (!universityId) {
+                console.error('University ID not found');
+                alert('University ID not found. Please log in again.');
+                return;
+            }
+
+            const courseData = {
+                name: courseName,
+                description: courseDescription,
+                university_id: universityId,
+                teacher_id: teacherId,
+                mandatory: false
+            };
+
+            try {
+                const response = await fetch('/add-course', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(courseData)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to add course');
+                }
+
+                alert('Course added successfully');
+                closeAddCourseModal();
+                // Clear form fields
+                document.getElementById('courseName').value = '';
+                document.getElementById('courseDescription').value = '';
+                displayCourses(); // Refresh the course list
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to add course');
+            }
+        }
+
+        // Open the Specify Mandatory modal
+        async function openSpecifyMandatoryModal() {
+            const mandatoryCoursesList = document.getElementById('mandatoryCoursesList');
+            mandatoryCoursesList.innerHTML = '<div class="empty-state"><p>Loading courses...</p></div>';
+            document.getElementById('specifyMandatoryModal').style.display = 'block';
+            
+            try {
+                const mandatoryCourses = await fetchMandatoryCourses();
+                
+                if (mandatoryCourses.length === 0) {
+                    mandatoryCoursesList.innerHTML = '<div class="empty-state"><p>No mandatory courses available</p></div>';
+                } else {
+                    let mandatoryCoursesHTML = '';
+                    mandatoryCourses.forEach(course => {
+                        mandatoryCoursesHTML += `
+                            <div>
+                                <input type="checkbox" id="course-${course.id}" value="${course.id}">
+                                <label for="course-${course.id}">${course.name} (${course.credits} credits)</label>
+                            </div>
+                        `;
+                    });
+                    mandatoryCoursesList.innerHTML = mandatoryCoursesHTML;
+                }
+
+                // Load teachers for dropdown
+                const teacherSelect = document.getElementById('teacherSelect');
+                teacherSelect.innerHTML = '<option value="">Loading teachers...</option>';
+                
+                const teachers = await fetchTeachers();
+                let teacherOptionsHTML = '<option value="">Select a teacher</option>';
+                
+                if (teachers.length === 0) {
+                    teacherOptionsHTML = '<option value="">No teachers available</option>';
+                } else {
+                    teachers.forEach(teacher => {
+                        teacherOptionsHTML += `
+                            <option value="${teacher.id}">${teacher.username}</option>
+                        `;
+                    });
+                }
+                
+                teacherSelect.innerHTML = teacherOptionsHTML;
+            } catch (error) {
+                console.error('Error:', error);
+                mandatoryCoursesList.innerHTML = '<div class="empty-state"><p>Failed to load courses</p></div>';
+            }
+        }
+
+        // Close the Specify Mandatory modal
+        function closeSpecifyMandatoryModal() {
+            document.getElementById('specifyMandatoryModal').style.display = 'none';
+        }
+
+        // Fetch mandatory courses not in the Courses table
+        async function fetchMandatoryCourses() {
+            try {
+                const response = await fetch('/get_mandatory');
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch mandatory courses');
+                }
+                
+                const responseText = await response.text();
+                console.log('Response Text:', responseText); // Debugging log
+                
+                try {
+                    const data = JSON.parse(responseText);
+                    console.log('Mandatory Courses:', data); // Debugging log
+                    return data;
+                } catch (jsonError) {
+                    console.error('JSON Parse Error:', jsonError);
+                    return [];
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                return [];
+            }
+        }
+
+        // Assign selected mandatory courses to a professor
+        async function assignMandatoryCourses() {
+            const universityId = localStorage.getItem('university_id');
+            const teacherId = document.getElementById('teacherSelect').value;
+            const checkboxes = document.querySelectorAll('#mandatoryCoursesList input[type="checkbox"]:checked');
+
+            if (!teacherId) {
+                alert('Please select a professor.');
+                return;
+            }
+            
+            if (checkboxes.length === 0) {
+                alert('Please select at least one course.');
+                return;
+            }
+
+            let hasError = false; // Track if any error occurs
+            let successCount = 0;
+
+            for (const checkbox of checkboxes) {
+                const courseId = checkbox.value;
+                const courseName = checkbox.nextElementSibling.textContent.split(' (')[0];
+
+                const courseData = {
+                    name: courseName,
+                    description: 'Mandatory course',
+                    university_id: universityId,
+                    teacher_id: teacherId,
+                    mandatory: true
+                };
+
+                try {
+                    const response = await fetch('/add-mandatory-course', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(courseData)
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        if (errorData.error === "Course already exists for this university") {
+                            alert(`Course "${courseName}" already exists for this university.`);
+                        } else {
+                            throw new Error('Failed to assign course');
+                        }
+                        hasError = true; // Set error flag
+                    } else {
+                        successCount++;
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert(`Failed to assign course: ${courseName}`);
+                    hasError = true; // Set error flag
+                }
+            }
+
+            if (successCount > 0) {
+                if (hasError) {
+                    alert(`Successfully assigned ${successCount} course(s). Some courses could not be assigned.`);
+                } else {
+                    alert('Mandatory courses assigned successfully');
+                }
+                closeSpecifyMandatoryModal();
+                displayCourses(); // Refresh the course list
+            }
+        }
+
+        // Delete a course
+        async function deleteCourse(courseId) {
+            if (!confirm('Are you sure you want to delete this course?')) {
+                return; // Do nothing if the user cancels the deletion
+            }
+
+            try {
+                const response = await fetch('/delete-course', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ course_id: courseId })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to delete course');
+                }
+
+                alert('Course deleted successfully');
+                displayCourses(); // Refresh the course list
+                
+                // Reset right panel if it was showing the deleted course
+                document.getElementById('right-bar').innerHTML = `
+                    <h3>Select a class to view attending students</h3>
+                    <div class="student-list" id="student-list">
+                        <div class="empty-state">
+                            <p>No students selected</p>
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to delete course');
+            }
+        }
+
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            if (event.target === document.getElementById('addCourseModal')) {
+                closeAddCourseModal();
+            }
+            if (event.target === document.getElementById('specifyMandatoryModal')) {
+                closeSpecifyMandatoryModal();
+            }
+        }
+
+        // Load courses when the page loads
+        window.onload = function() {
+            // Check if user is logged i
+            
+            
+            displayCourses();
+        };
+    </script>
+</body>
+</html>

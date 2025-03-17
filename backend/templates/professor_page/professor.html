@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professor Portal</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            background-color: #333;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            font-size: 16px;
+        }
+
+        .nav-links a:hover {
+            text-decoration: underline;
+        }
+
+        /* Content Container Styles */
+        .content-container {
+            display: flex;
+            margin: 20px;
+        }
+
+        .left-bar {
+            width: 30%;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .right-bar {
+            width: 70%;
+            background-color: white;
+            margin-left: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .class-list {
+            margin-top: 10px;
+        }
+
+        .class-item {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            cursor: pointer;
+        }
+
+        .class-item:hover {
+            background-color: #f9f9f9;
+        }
+
+        .student-list {
+            margin-top: 10px;
+        }
+
+        .student-item {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .student-item input {
+            width: 60px;
+            padding: 5px;
+            margin-left: 10px;
+        }
+
+        .student-item button {
+            padding: 5px 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .student-item button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1>Professor Portal</h1>
+        
+    </div>
+
+    <div class="content-container">
+        <!-- Left Bar: List of Classes -->
+        <div class="left-bar">
+            <h3>Your Classes</h3>
+            <div class="class-list" id="class-list">
+                <!-- Class list will be populated dynamically -->
+            </div>
+        </div>
+
+        <!-- Right Bar: Students in Selected Class -->
+        <div class="right-bar" id="right-bar">
+            <h3>Select a class to view enrolled students</h3>
+            <div class="student-list" id="student-list">
+                <!-- Student list will be populated dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Fetch classes for the professor
+        async function fetchClasses(professorId) {
+            try {
+                const response = await fetch(`/professors/${professorId}/classes`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch classes');
+                }
+                const classes = await response.json();
+                return classes;
+            } catch (error) {
+                console.error('Error:', error);
+                return [];
+            }
+        }
+
+        // Fetch students enrolled in a specific class
+        async function fetchStudentsByClass(classId) {
+    try {
+        const response = await fetch(`/courses/${classId}/students`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch students and grades');
+        }
+        const students = await response.json();
+        return students;
+    } catch (error) {
+        console.error('Error:', error);
+        return [];
+    }
+}
+
+        // Update a student's average points
+        async function updateStudentPoints(studentId, classId, points) {
+            try {
+                const response = await fetch(`/students/${studentId}/points`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        class_id: classId,
+                        points: points
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to update points');
+                }
+
+                const result = await response.json();
+                return result;
+            } catch (error) {
+                console.error('Error:', error);
+                return null;
+            }
+        }
+
+        // Display classes in the left bar
+      // Display students in the right bar
+      async function displayStudents(classId) {
+    const students = await fetchStudentsByClass(classId);
+    const studentList = document.getElementById('student-list');
+    studentList.innerHTML = ''; // Clear previous students
+
+    students.forEach(student => {
+        const studentItem = document.createElement('div');
+        studentItem.classList.add('student-item');
+
+        if (student.graduated) {
+            studentItem.innerHTML = `
+                <span>${student.username} (Graduated)</span>
+                <div>
+                    <input type="number" disabled placeholder="Graduated">
+                    <button disabled>Confirm</button>
+                </div>
+            `;
+        } else {
+            studentItem.innerHTML = `
+                <span>${student.username}</span>
+                <div>
+                    <input type="number" id="points-${student.id}" placeholder="Points" value="${student.grade || ''}">
+                    <button onclick="confirmPoints(${student.id}, ${classId})">Confirm</button>
+                </div>
+            `;
+        }
+
+        studentList.appendChild(studentItem);
+    });
+}
+        // Display students in the right bar
+       
+// Display classes in the left bar
+async function displayClasses() {
+    const professorId = localStorage.getItem('professor_id');
+    if (!professorId) {
+        console.error('Professor ID not found');
+        return;
+    }
+
+    const classes = await fetchClasses(professorId);
+    const classList = document.getElementById('class-list');
+
+    let classListHTML = '';
+    classes.forEach(cls => {
+        classListHTML += `
+            <div class="class-item" onclick="displayStudents(${cls.id})">
+                ${cls.name}
+            </div>
+        `;
+    });
+
+    classList.innerHTML = classListHTML;
+}
+        // Confirm and update a student's points
+        async function confirmPoints(studentId, classId) {
+    const pointsInput = document.getElementById(`points-${studentId}`);
+    const points = pointsInput.value;
+
+    if (!points || isNaN(points)) {
+        alert('Please enter valid points');
+        return;
+    }
+
+    try {
+        const response = await fetch('/grades', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                student_id: studentId,
+                course_id: classId,
+                grade: points
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to update grade');
+        }
+
+        const result = await response.json();
+        alert(result.message); // "Grade updated successfully"
+
+        // Fetch the updated list of students and re-render the UI
+        await displayStudents(classId);
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to update grade');
+    }
+}
+        // Load classes when the page loads
+        // Load classes when the page loads
+window.onload = displayClasses;
+    </script>
+</body>
+</html>

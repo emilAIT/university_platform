@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mandatory Courses | Super Admin Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            background-color: #333;
+            padding: 15px;
+            color: white;
+        }
+        .navbar-brand {
+            font-size: 24px;
+            color: white;
+            text-decoration: none;
+            margin-right: 20px;
+        }
+        .content-area {
+            display: flex;
+            margin-top: 20px;
+        }
+        .nav-bottoms {
+            width: 200px;
+            padding: 10px;
+        }
+        .info-panel {
+            flex-grow: 1;
+            padding: 20px;
+            border-left: 1px solid #ccc;
+            min-height: 500px;
+        }
+        .nav-bottom {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .nav-bottom:hover {
+            background-color: #45a049;
+        }
+        .course-item {
+            background-color: #f9f9f9;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 3px solid #4CAF50;
+            position: relative;
+        }
+        .course-actions {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+        }
+        .edit-button, .delete-button, .add-button {
+            padding: 5px 10px;
+            margin-left: 5px;
+            cursor: pointer;
+            border: none;
+            border-radius: 3px;
+        }
+        .edit-button {
+            background-color: #337ab7;
+            color: white;
+        }
+        .delete-button {
+            background-color: #d9534f;
+            color: white;
+        }
+        .add-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 8px 15px;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .form-container {
+            background-color: #f9f9f9;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            display: none;
+        }
+        .form-buttons {
+            margin-top: 15px;
+        }
+        .course-details {
+            margin-top: 5px;
+            font-size: 14px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <span class="navbar-brand">University Management</span>
+    </div>
+
+    <div class="content-area">
+        <div class="nav-bottoms">
+            <button class="nav-bottom" onclick="window.location.href='/universities'">Universities</button>
+            <button class="nav-bottom" onclick="window.location.href='/register-university-page'">Register University</button>
+            <button class="nav-bottom" onclick="window.location.href='/mandatory-courses'">Mandatory Courses</button>
+        </div>
+
+        <div class="info-panel">
+            <h2>Mandatory Courses</h2>
+            <p>These courses must be included in all university curricula. You can add, edit, or remove mandatory courses from this page.</p>
+            
+            <button class="add-button" onclick="showAddCourseForm()">Add New Mandatory Course</button>
+            
+            <div class="form-container" id="courseForm">
+                <h3 id="formTitle">Add Mandatory Course</h3>
+                <form id="mandatoryCourseForm" onsubmit="saveCourse(event)">
+                    <input type="hidden" id="courseId" value="">
+                    <div class="form-group">
+                        <label for="courseName">Course Name:</label>
+                        <input type="text" id="courseName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="courseDescription">Description:</label>
+                        <textarea id="courseDescription" rows="3" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="creditHours">Credit Hours:</label>
+                        <input type="number" id="creditHours" min="1" max="6" required>
+                    </div>
+                    <div class="form-buttons">
+                        <button type="submit" class="edit-button">Save</button>
+                        <button type="button" class="delete-button" onclick="cancelForm()">Cancel</button>
+                    </div>
+                </form>
+            </div>
+            
+            <div id="coursesList">
+                <!-- Course list will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+         function loadPage(url) {
+            window.location.href = url;
+        }
+        async function fetchMandatoryCourses() {
+        try {
+            const response = await fetch('/get_mandatory');
+            if (!response.ok) {
+                throw new Error('Failed to fetch mandatory courses');
+            }
+            const courses = await response.json();
+            return courses;
+        } catch (error) {
+            console.error('Error:', error);
+            return [];
+        }
+    }
+
+    // Display all mandatory courses
+    async function displayCourses() {
+        const coursesList = document.getElementById('coursesList');
+        const courses = await fetchMandatoryCourses(); // Fetch courses from the server
+
+        let coursesHTML = '';
+        courses.forEach(course => {
+            coursesHTML += `
+                <div class="course-item" id="course-${course.id}">
+                    <div class="course-actions">
+                        <button class="edit-button" onclick="editCourse(${course.id})">Edit</button>
+                        <button class="delete-button" onclick="deleteCourse(${course.id})">Delete</button>
+                    </div>
+                    <h3>${course.name}</h3>
+                    <div class="course-details">
+                        <p>${course.description}</p>
+                        <strong>Credit Hours:</strong> ${course.credits}
+                    </div>
+                </div>
+            `;
+        });
+
+        coursesList.innerHTML = coursesHTML;
+    }
+
+    // Show the form to add a new course
+    function showAddCourseForm() {
+        document.getElementById('formTitle').textContent = 'Add Mandatory Course';
+        document.getElementById('courseId').value = '';
+        document.getElementById('courseName').value = '';
+        document.getElementById('courseDescription').value = '';
+        document.getElementById('creditHours').value = '';
+        document.getElementById('courseForm').style.display = 'block';
+    }
+
+    // Edit an existing course
+    async function editCourse(courseId) {
+        const response = await fetch(`/get_mandatory/${courseId}`);
+        if (!response.ok) {
+            console.error('Failed to fetch course details');
+            return;
+        }
+        const course = await response.json();
+
+        if (course) {
+            document.getElementById('formTitle').textContent = 'Edit Mandatory Course';
+            document.getElementById('courseId').value = course.id;
+            document.getElementById('courseName').value = course.name;
+            document.getElementById('courseDescription').value = course.description;
+            document.getElementById('creditHours').value = course.credits;
+            document.getElementById('courseForm').style.display = 'block';
+        }
+    }
+
+    // Delete a course
+    async function deleteCourse(courseId) {
+        if (confirm('Are you sure you want to delete this mandatory course?')) {
+            try {
+                const response = await fetch(`/delete_mandatory/${courseId}`, {
+                    method: 'DELETE'
+                });
+                if (!response.ok) {
+                    throw new Error('Failed to delete course');
+                }
+                displayCourses(); // Refresh the list after deletion
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+    }
+
+    // Cancel form submission
+    function cancelForm() {
+        document.getElementById('courseForm').style.display = 'none';
+    }
+
+    // Save course (either add new or update existing)
+    async function saveCourse(event) {
+        event.preventDefault();
+
+        const courseId = document.getElementById('courseId').value;
+        const courseName = document.getElementById('courseName').value;
+        const courseDescription = document.getElementById('courseDescription').value;
+        const creditHours = parseInt(document.getElementById('creditHours').value);
+
+        const courseData = {
+            name: courseName,
+            description: courseDescription,
+            credits: creditHours
+        };
+
+        try {
+            let response;
+            if (courseId) {
+                // Update existing course
+                response = await fetch(`/update_mandatory/${courseId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(courseData)
+                });
+            } else {
+                // Add new course
+                response = await fetch('/add_mandatory', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(courseData)
+                });
+            }
+
+            if (!response.ok) {
+                throw new Error('Failed to save course');
+            }
+
+            displayCourses(); // Refresh the list after saving
+            cancelForm();
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    // Load courses when the page loads
+    window.onload = displayCourses;
+    </script>
+</body>
+</html>

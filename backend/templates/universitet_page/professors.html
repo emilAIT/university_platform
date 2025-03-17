@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professors</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+            color: #333;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            background-color: #3498db;
+            color: white;
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin-left: 24px;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            padding: 6px 12px;
+            border-radius: 4px;
+        }
+
+        .nav-links a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Content Container Styles */
+        .content-container {
+            display: flex;
+            margin: 24px;
+            gap: 24px;
+        }
+
+        .left-bar {
+            width: 30%;
+            background-color: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .right-bar {
+            width: 70%;
+            background-color: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Header Styles */
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .professor-list {
+            margin-top: 16px;
+        }
+
+        .professor-item {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s ease;
+        }
+
+        .professor-item:hover {
+            background-color: #f5f8fa;
+        }
+
+        .professor-name {
+            flex-grow: 1;
+        }
+
+        .delete-icon {
+            color: #e74c3c;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .delete-icon:hover {
+            background-color: #ffebee;
+        }
+
+        .class-list {
+            margin-top: 16px;
+        }
+
+        .class-item {
+            padding: 16px;
+            border-bottom: 1px solid #eee;
+            background-color: #f9f9f9;
+            margin-bottom: 12px;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+        }
+
+        /* Button Styles */
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 24px;
+            border-radius: 12px;
+            width: 400px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .close {
+            float: right;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #aaa;
+            transition: all 0.2s ease;
+        }
+
+        .close:hover {
+            color: #e74c3c;
+        }
+
+        /* Form Styles */
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        label {
+            font-weight: 500;
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        input[type="text"], input[type="password"] {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        input[type="text"]:focus, input[type="password"]:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.25);
+        }
+
+        /* Confirmation Modal */
+        #confirmDeleteModal {
+            display: none;
+            position: fixed;
+            z-index: 2;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .confirm-modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 24px;
+            border-radius: 12px;
+            width: 300px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .confirm-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .confirm-buttons button {
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .confirm-delete {
+            background-color: #e74c3c;
+        }
+
+        .confirm-delete:hover {
+            background-color: #c0392b;
+        }
+
+        .cancel-delete {
+            background-color: #95a5a6;
+        }
+
+        .cancel-delete:hover {
+            background-color: #7f8c8d;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #2ecc71;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            display: none;
+            z-index: 1000;
+            animation: fade-in 0.3s, fade-out 0.3s 2.7s;
+        }
+
+        .toast.error {
+            background-color: #e74c3c;
+        }
+
+        @keyframes fade-in {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fade-out {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(20px); }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 24px;
+            color: #7f8c8d;
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .content-container {
+                flex-direction: column;
+            }
+
+            .left-bar, .right-bar {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1>University Portal</h1>
+        <div class="nav-links">
+            <a href="{{ url_for('students') }}">Students</a>
+            <a href="{{ url_for('professors') }}">Professors</a>
+            <a href="{{ url_for('classes') }}">Classes</a>
+        </div>
+    </div>
+
+    <div class="content-container">
+        <div class="left-bar">
+            <div class="header-container">
+                <h3>Professors</h3>
+                <button onclick="openAddProfessorModal()">Add Professor</button>
+            </div>
+            <div class="professor-list" id="professor-list">
+                <!-- Professor list will be populated dynamically -->
+                <div class="empty-state">
+                    <p>Loading professors...</p>
+                </div>
+            </div>
+        </div>
+        <div class="right-bar" id="right-bar">
+            <h3>Select a professor to view their classes</h3>
+            <div class="class-list" id="class-list">
+                <!-- Class list will be populated dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Professor Modal -->
+    <div id="addProfessorModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeAddProfessorModal()">&times;</span>
+            <h3>Add New Professor</h3>
+            <form id="addProfessorForm">
+                <div>
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+
+                <div>
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+
+                <button type="button" onclick="registerProfessor()">Register Professor</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="confirmDeleteModal" class="modal">
+        <div class="confirm-modal-content">
+            <h3>Confirm Delete</h3>
+            <p>Are you sure you want to delete this professor?</p>
+            <div class="confirm-buttons">
+                <button class="cancel-delete" onclick="closeDeleteModal()">Cancel</button>
+                <button class="confirm-delete" onclick="confirmDeleteProfessor()">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <script>
+        let professorToDelete = null;
+
+        // Fetch professors from the backend
+        async function fetchProfessors() {
+            try {
+                const universityId = localStorage.getItem('university_id');
+                if (!universityId) {
+                    showToast('University ID not found', true);
+                    return [];
+                }
+
+                const response = await fetch(`/professors/${universityId}`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch professors');
+                }
+                const professors = await response.json();
+                return professors;
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('Failed to fetch professors', true);
+                return [];
+            }
+        }
+
+        // Fetch classes taught by a professor
+        async function fetchClassesByProfessor(professorId) {
+            try {
+                const response = await fetch(`/professors/${professorId}/classes`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch classes');
+                }
+                const classes = await response.json();
+                return classes;
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('Failed to fetch classes', true);
+                return [];
+            }
+        }
+
+        // Display professors in the left bar
+        async function displayProfessors() {
+            const professors = await fetchProfessors();
+            const professorList = document.getElementById('professor-list');
+
+            if (professors.length === 0) {
+                professorList.innerHTML = `
+                    <div class="empty-state">
+                        <p>No professors found.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let professorListHTML = '';
+            professors.forEach(professor => {
+                professorListHTML += `
+                    <div class="professor-item">
+                        <span class="professor-name" onclick="displayClasses(${professor.id})">
+                            ${professor.username}
+                        </span>
+                        <span class="delete-icon" onclick="openDeleteModal(${professor.id})">
+                            <i class="fas fa-trash-alt"></i> &#128465;
+                        </span>
+                    </div>
+                `;
+            });
+
+            professorList.innerHTML = professorListHTML;
+        }
+
+        // Display classes taught by a professor
+        async function displayClasses(professorId) {
+            const rightBar = document.getElementById('right-bar');
+            const classList = document.getElementById('class-list');
+            
+            // Show loading state
+            classList.innerHTML = '<div class="empty-state"><p>Loading classes...</p></div>';
+            
+            const classes = await fetchClassesByProfessor(professorId);
+            
+            // Get professor name
+            const professors = await fetchProfessors();
+            const professor = professors.find(p => p.id === professorId);
+            const professorName = professor ? professor.username : 'Professor';
+            
+            rightBar.querySelector('h3').textContent = `${professorName}'s Classes`;
+
+            if (classes.length === 0) {
+                classList.innerHTML = `
+                    <div class="empty-state">
+                        <p>No classes assigned to this professor.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let classListHTML = '';
+            classes.forEach(cls => {
+                classListHTML += `
+                    <div class="class-item">
+                        <h4>${cls.name}</h4>
+                        <p><strong>Schedule:</strong> ${cls.schedule || 'Not specified'}</p>
+                        <p><strong>Location:</strong> ${cls.location || 'Not specified'}</p>
+                    </div>
+                `;
+            });
+
+            classList.innerHTML = classListHTML;
+        }
+
+        // Open delete confirmation modal
+        function openDeleteModal(professorId) {
+            professorToDelete = professorId;
+            document.getElementById('confirmDeleteModal').style.display = 'block';
+            // Prevent event propagation
+            event.stopPropagation();
+        }
+
+        // Close delete confirmation modal
+        function closeDeleteModal() {
+            document.getElementById('confirmDeleteModal').style.display = 'none';
+            professorToDelete = null;
+        }
+                // Confirm deletion of a professor
+                async function confirmDeleteProfessor() {
+            if (!professorToDelete) {
+                showToast('No professor selected for deletion', true);
+                return;
+            }
+
+            try {
+                const response = await fetch(`/delete-professor`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        professor_id: professorToDelete,
+                    }),
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to delete professor');
+                }
+
+                const result = await response.json();
+                showToast(result.message || 'Professor deleted successfully');
+                closeDeleteModal();
+                displayProfessors(); // Refresh the professor list
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('Failed to delete professor', true);
+            }
+        }
+
+        // Open the add professor modal
+        function openAddProfessorModal() {
+            document.getElementById('addProfessorModal').style.display = 'block';
+        }
+
+        // Close the add professor modal
+        function closeAddProfessorModal() {
+            document.getElementById('addProfessorModal').style.display = 'none';
+        }
+
+        // Register a new professor
+        async function registerProfessor() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const universityId = localStorage.getItem('university_id');
+
+            if (!username || !password || !universityId) {
+                showToast('Please fill in all fields', true);
+                return;
+            }
+
+            try {
+                const response = await fetch('/register-professor', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        username,
+                        password,
+                        role: 'professor',
+                        university_id: universityId,
+                    }),
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to register professor');
+                }
+
+                const result = await response.json();
+                showToast(result.message || 'Professor registered successfully');
+                closeAddProfessorModal();
+                displayProfessors(); // Refresh the professor list
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('Failed to register professor', true);
+            }
+        }
+
+        // Show toast notification
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = isError ? 'toast error' : 'toast';
+            toast.style.display = 'block';
+
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
+        }
+
+        // Initialize the page
+        async function init() {
+            await displayProfessors();
+        }
+
+        // Event listeners for modals
+        window.onclick = function (event) {
+            const addProfessorModal = document.getElementById('addProfessorModal');
+            const confirmDeleteModal = document.getElementById('confirmDeleteModal');
+
+            if (event.target === addProfessorModal) {
+                closeAddProfessorModal();
+            }
+            if (event.target === confirmDeleteModal) {
+                closeDeleteModal();
+            }
+        };
+
+        // Load the page
+        init();
+    </script>
+</body>
+</html>

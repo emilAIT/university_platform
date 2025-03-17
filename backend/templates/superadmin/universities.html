@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Universities | Super Admin Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            background-color: #333;
+            padding: 15px;
+            color: white;
+        }
+        .navbar-brand {
+            font-size: 24px;
+            color: white;
+            text-decoration: none;
+            margin-right: 20px;
+        }
+        .content-area {
+            display: flex;
+            margin-top: 20px;
+        }
+        .nav-bottoms {
+            width: 200px;
+            padding: 10px;
+        }
+        .info-panel {
+            flex-grow: 1;
+            padding: 20px;
+            border-left: 1px solid #ccc;
+            min-height: 500px;
+            display: flex;
+        }
+        .nav-bottom {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .nav-bottom:hover {
+            background-color: #45a049;
+        }
+        .university-list {
+            width: 250px;
+            border-right: 1px solid #ddd;
+            padding-right: 15px;
+            overflow-y: auto;
+            max-height: 600px;
+        }
+        .university-details {
+            flex-grow: 1;
+            padding: 0 20px;
+        }
+        .university-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+        }
+        .university-item:hover {
+            background-color: #f5f5f5;
+        }
+        .university-item.active {
+            background-color: #e0f7e0;
+            border-left: 3px solid #4CAF50;
+        }
+        .detail-section {
+            margin-bottom: 20px;
+        }
+        .requirement-item {
+            background-color: #f9f9f9;
+            padding: 10px;
+            margin-bottom: 5px;
+            border-left: 3px solid #4CAF50;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <span class="navbar-brand">University Management</span>
+    </div>
+
+    <div class="content-area">
+        <div class="nav-bottoms">
+            <button class="nav-bottom" onclick="window.location.href='/universities'">Universities</button>
+            <button class="nav-bottom" onclick="window.location.href='/register-university-page'">Register University</button>
+            <button class="nav-bottom" onclick="window.location.href='/mandatory-courses'">Mandatory Courses</button>
+        </div>
+
+        <div class="info-panel">
+            <div class="university-list" id="universityList">
+                <h3>All Universities</h3>
+                <!-- University list will be loaded here -->
+            </div>
+            
+            <div class="university-details" id="universityDetails">
+                <h2>Select a university to view details</h2>
+                <p>Click on a university from the list on the left to view its detailed information.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+         function loadPage(url) {
+            window.location.href = url;
+        }
+        async function loadUniversities() {
+    try {
+        
+        const response = await fetch('/list_universities');
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch data');
+        }
+        
+
+        const universities = await response.json(); // Parse the JSON response
+        if (universities.length === 0) {
+            document.getElementById('universityList').innerHTML = '<h3>No universities.</h3>';
+            throw new Error('No universities found');
+        }
+        const universityList = document.getElementById('universityList');
+        let listHTML = '<h3>All Universities</h3>';
+        
+        // Loop through the universities array and generate HTML
+        universities.forEach(university => {
+            listHTML += `
+                <div class="university-item" onclick="showUniversityDetails(${university[0]})">
+                    ${university[1]}
+                </div>
+            `;
+        });
+        
+        universityList.innerHTML = listHTML;
+    } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('universityList').innerHTML = '<h3>Error loading universities. No universities.</h3>';
+    }
+}
+        // Function to show details of a selected university
+        async function showUniversityDetails(universityId) {
+            try {
+                const response = await fetch(`/list_university/${universityId}`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch university details');
+                }
+                const university = await response.json();
+                console.log('University Details:', university);
+
+                // Clear active class from all items
+                const items = document.querySelectorAll('.university-item');
+                items.forEach(item => item.classList.remove('active'));
+                
+                // Set active class to selected item
+                const selectedItem = document.querySelector(`.university-item:nth-child(${universityId + 1})`);
+                if (selectedItem) {
+                    selectedItem.classList.add('active');
+                }
+                
+                const detailsDiv = document.getElementById('universityDetails');
+                
+                if (university) {
+                    detailsDiv.innerHTML = `
+                        <h2>${university.name}</h2>
+                        
+                        <div class="detail-section">
+                            <h3>Requirements for Semester Completion</h3>
+                            <div class="requirement-item">
+                                <strong>Minimum Courses Required:</strong> ${university.min_courses}
+                            </div>
+                            <div class="requirement-item">
+                                <strong>Minimum GPA Required:</strong> ${university.min_gpa}
+                            </div>
+                            <div class="requirement-item">
+                                <strong>Minimum Attendance Rate:</strong> ${university.attendance_rate}%
+                            </div>
+                        </div>
+                        
+                    
+                    `;
+                } else {
+                    detailsDiv.innerHTML = '<h2>University not found</h2>';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('universityDetails').innerHTML = '<h2>Error loading university details. Please try again.</h2>';
+            }
+        }
+
+        // Load universities when the page loads
+        window.onload = loadUniversities;
+
+    </script>
+</body>
+</html>

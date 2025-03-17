@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Grades</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        #right-bar {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .finish-button, .graduation-button {
+            display: block;
+            width: 200px;
+            margin: 20px auto;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            text-align: center;
+        }
+        .finish-button:hover, .graduation-button:hover {
+            background-color: #45a049;
+        }
+        .graduation-button {
+            background-color: #007bff;
+        }
+        .graduation-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>My Courses and Grades</h1>
+    <div id="right-bar">
+        <!-- Grades will be populated here by JavaScript -->
+    </div>
+
+    <button class="finish-button" onclick="finishSemester()">Finish Semester</button>
+    <button class="graduation-button" onclick="requestGraduation()">Request Graduation</button>
+
+    <script>
+        // Fetch student ID from localStorage
+        const studentId = localStorage.getItem('student_id');
+
+        if (!studentId) {
+            alert('Student ID not found in localStorage. Please log in.');
+        } else {
+            // Call the viewStudentGrades function
+            viewStudentGrades(studentId);
+        }
+
+        async function viewStudentGrades(studentId) {
+            try {
+                const response = await fetch(`/students/${studentId}/grades`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch grades');
+                }
+                const grades = await response.json();
+
+                const rightBar = document.getElementById('right-bar');
+                let gradesHTML = `<h3>Student Grades</h3>`;
+
+                if (grades.length === 0) {
+                    gradesHTML += '<p>No grades available for this student.</p>';
+                } else {
+                    gradesHTML += '<ul>';
+                    grades.forEach(grade => {
+                        gradesHTML += `
+                            <li>
+                                <strong>Course:</strong> ${grade.course_name} <br>
+                                <strong>Grade:</strong> ${grade.grade}
+                            </li>
+                            <hr>
+                        `;
+                    });
+                    gradesHTML += '</ul>';
+                }
+
+                rightBar.innerHTML = gradesHTML;
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to load grades');
+            }
+        }
+
+        async function finishSemester() {
+            try {
+                const universityResponse = await fetch(`/students/${studentId}/university`);
+                if (!universityResponse.ok) {
+                    throw new Error('Failed to fetch university details');
+                }
+                const university = await universityResponse.json();
+
+                const gradesResponse = await fetch(`/students/${studentId}/grades`);
+                if (!gradesResponse.ok) {
+                    throw new Error('Failed to fetch grades');
+                }
+                const grades = await gradesResponse.json();
+
+                if (grades.length < university.min_courses) {
+                    alert(`Not approved: You have enrolled in only ${grades.length} courses, but the minimum required is ${university.min_courses}.`);
+                    return;
+                }
+
+                const totalGrade = grades.reduce((sum, grade) => sum + grade.grade, 0);
+                const averageGrade = totalGrade / grades.length;
+
+                if (averageGrade >= university.min_gpa) {
+                    alert('Congratulations! You have successfully completed the semester.');
+                } else {
+                    alert(`Not approved: Your average grade is ${averageGrade.toFixed(2)}, but the minimum required GPA is ${university.min_gpa}.`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to process your request. Please try again.');
+            }
+        }
+
+        async function requestGraduation() {
+    try {
+        const studentId = localStorage.getItem('student_id');
+        if (!studentId) {
+            alert('Student ID not found. Please log in again.');
+            return;
+        }
+
+        console.log("Starting graduation request with student ID:", studentId);
+
+        // First, fetch university requirements and student data to display locally
+        const universityResponse = await fetch(`/students/${studentId}/university`);
+        if (!universityResponse.ok) {
+            throw new Error('Failed to fetch university details');
+        }
+        const university = await universityResponse.json();
+        console.log("University requirements:", university);
+
+        // Fetch student's grades and course information
+        const gradesResponse = await fetch(`/students/${studentId}/grades`);
+        if (!gradesResponse.ok) {
+            throw new Error('Failed to fetch grades');
+        }
+        const grades = await gradesResponse.json();
+        console.log("Student grades:", grades);
+
+        // Get university ID from localStorage (set during login)
+        const universityId = localStorage.getItem('university_id');
+        console.log("University ID from localStorage:", universityId);
+
+        // Fetch mandatory courses information
+        const mandatoryResponse = await fetch(`/courses/mandatory?university_id=${universityId}`);
+        if (!mandatoryResponse.ok) {
+            throw new Error('Failed to fetch mandatory courses');
+        }
+        const mandatoryCourses = await mandatoryResponse.json();
+        console.log("Mandatory courses:", mandatoryCourses);
+
+        // Calculate stats for display
+        const totalGrade = grades.reduce((sum, grade) => sum + parseFloat(grade.grade || 0), 0);
+        const averageGrade = grades.length > 0 ? totalGrade / grades.length : 0;
+        console.log("Calculated GPA:", averageGrade.toFixed(2));
+        
+        // Count completed mandatory courses
+        const passedMandatory = grades.filter(grade => 
+            mandatoryCourses.some(mc => mc.id === grade.course_id && parseFloat(grade.grade) >= 60)
+        ).length;
+        console.log("Passed mandatory courses:", passedMandatory);
+
+        // Prepare request payload
+        const requestData = { student_id: parseInt(studentId) };
+        console.log("Sending graduation request with data:", requestData);
+
+        // Send the graduation request
+        const response = await fetch('/request-graduation', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestData),
+        });
+
+        console.log("Response status:", response.status);
+        const result = await response.json();
+        console.log("Response data:", result);
+        
+        if (!response.ok) {
+            // Display detailed information about why graduation was denied
+            let message = `Graduation Request Denied: ${result.reason || 'Unknown reason'}`;
+            
+            // Provide detailed requirements vs. achievements
+            message += `\n\nYour Progress:
+- Courses completed: ${grades.length}/${university.min_courses} required
+- Current GPA: ${averageGrade.toFixed(2)}/${university.min_gpa} required
+- Mandatory courses passed: ${passedMandatory}/${mandatoryCourses.length} required`;
+            
+            alert(message);
+        } else {
+            // Display success message with detailed information
+            let message = `Congratulations! Your graduation request was approved!`;
+            
+            // Show achievement details
+            message += `\n\nYour Achievements:
+- Courses completed: ${grades.length}/${university.min_courses} required
+- Final GPA: ${averageGrade.toFixed(2)}/${university.min_gpa} required
+- Mandatory courses passed: ${passedMandatory}/${mandatoryCourses.length} required`;
+            
+            alert(message);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        // Try to get more details about the error
+        if (error.response) {
+            console.error('Response data:', error.response.data);
+            console.error('Response status:', error.response.status);
+            alert(`Failed to process graduation request: ${error.message}\nStatus: ${error.response.status}`);
+        } else {
+            alert('Failed to process graduation request: ' + error.message);
+        }
+    }
+}
+    </script>
+</body>
+</html>
