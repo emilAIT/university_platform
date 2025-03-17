@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Super Admin Dashboard</title>
+    <link rel="stylesheet" href="static/superadmin.css">
+</head>
+<body>
+    <nav class="navbar">
+        <h1>Super Admin Dashboard</h1>
+        <ul>
+            <li><a href="#" data-section="dashboard" class="active">Dashboard</a></li>
+            <li><a href="#" data-section="universities">Universities</a></li>
+            <li><a href="#" data-section="admins">Admins</a></li>
+            <li><a href="#" data-section="students">Students</a></li>
+            <li><a href="#" data-section="subjects">Subjects</a></li>
+            <li><a href="{{ url_for('logout') }}">Logout</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="section active">
+            <h2>Dashboard Overview</h2>
+            <div class="stats">
+                <div class="card">Total Universities: <span id="universityCount">{{ amounts[0] }}</span></div>
+                <div class="card">Total Admins: <span id="adminCount">{{ amounts[1] }}</span></div>
+                <div class="card">Total Students: <span id="studentCount">{{ amounts[2] }}</span></div>
+            </div>
+            <canvas id="analyticsChart"></canvas>
+        </section>
+
+        <!-- Universities Section -->
+        <section id="universities" class="section">
+            <h2>University Management</h2>
+            <form id="universityForm">
+                <input type="text" id="universityName" placeholder="University Name" required />
+                <button type="submit" class="action-btn">Add University</button>
+            </form>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Total Students</th>
+                        <th>Average Grade</th>
+                        <th>Graduation %</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="universityTable"></tbody>
+            </table>
+        </section>
+
+        <!-- Admins Section -->
+        <section id="admins" class="section">
+            <h2>Admin Management</h2>
+            <form id="adminForm">
+                <input type="text" id="universityId" placeholder="University ID" required />
+                <input type="text" id="login" placeholder="Login" required />
+                <input type="password" id="password" placeholder="Password" required />
+                <button type="submit" class="action-btn">Assign Admin</button>
+            </form>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>University</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="adminTable"></tbody>
+            </table>
+        </section>
+
+        <!-- Students Section -->
+        <section id="students" class="section">
+            <h2>Student Statistics</h2>
+            <label for="universityFilter">Filter by University:</label>
+            <select id="universityFilter">
+                <option value="all">All Universities</option>
+                {% for univ in univs %}
+                <option value="{{ univ[1] }}">{{ univ[1] }}</option>
+                {% endfor %}
+            </select>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Total Subjects</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="studentTable"></tbody>
+            </table>
+        </section>
+
+        <!-- Subjects Section -->
+        <section id="subjects" class="section">
+            <h2>Manage Necessary Subjects</h2>
+            <form id="necessarySubjectForm">
+                <input type="text" id="newSubject" placeholder="Enter subject name" required />
+                <button type="submit" class="action-btn">Add Subject</button>
+            </form>
+            <table id="necessarySubjectsTable">
+                <thead>
+                    <tr>
+                        <th>Subject Name</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for subject in necessary_subjects %}
+                    <tr>
+                        <td>{{ subject.name }}</td>
+                        <td><button class="delete-btn" onclick="deleteNecessarySubject({{ subject.subject_id }})">Delete</button></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            console.log("DOM fully loaded");
+
+            // Navigation Handling
+            const navLinks = document.querySelectorAll('.navbar a[data-section]');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const sectionId = this.getAttribute('data-section');
+                    console.log("Navigating to section:", sectionId);
+                    showSection(sectionId);
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+
+            // Initial Load
+            loadAllData();
+
+            // Section Switching
+            function showSection(sectionId) {
+                document.querySelectorAll('.section').forEach(sec => {
+                    sec.classList.toggle('active', sec.id === sectionId);
+                });
+            }
+
+            // Fetch and Update Functions
+            function loadAllData() {
+                console.log("Loading all data");
+                fetchTotals();
+                fetchUniversities();
+                fetchAdmins();
+                fetchStudents();
+                fetchNecessarySubjects();
+                updateChart();
+            }
+
+            function fetchTotals() {
+                fetch('/get_totals')
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log("Totals fetched:", data);
+                        document.getElementById('universityCount').textContent = data.universities;
+                        document.getElementById('adminCount').textContent = data.admins;
+                        document.getElementById('studentCount').textContent = data.students;
+                    })
+                    .catch(error => console.error('Error fetching totals:', error));
+            }
+
+            function fetchUniversities() {
+                fetch('/get_all_universities_performance')
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log("Universities fetched:", data);
+                        updateUniversityTable(data);
+                    })
+                    .catch(error => console.error('Error fetching universities:', error));
+            }
+
+            function fetchAdmins() {
+                fetch('/get_admins')
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log("Admins fetched:", data);
+                        updateAdminTable(data);
+                    })
+                    .catch(error => console.error('Error fetching admins:', error));
+            }
+
+            function fetchStudents() {
+                const universityFilter = document.getElementById('universityFilter').value;
+                const url = universityFilter === 'all' ? '/get_students_performance' : `/get_students_performance?university=${encodeURIComponent(universityFilter)}`;
+                console.log("Fetching students from:", url);
+                fetch(url)
+                    .then(response => {
+                        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log("Students data received:", data);
+                        if (data.students && Array.isArray(data.students)) {
+                            updateStudentTable(data.students);
+                        } else {
+                            console.warn("No valid students array in response:", data);
+                            updateStudentTable([]);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching students:', error);
+                        updateStudentTable([]);
+                    });
+            }
+
+            function fetchNecessarySubjects() {
+                fetch('/get_necessary_subjects')
+                    .then(response => {
+                        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log("Necessary subjects fetched:", data);
+                        updateNecessarySubjectsTable(data.subjects);
+                    })
+                    .catch(error => console.error('Error fetching necessary subjects:', error));
+            }
+
+            // Update Table Functions
+            function updateUniversityTable(universities) {
+                const tableBody = document.getElementById('universityTable');
+                tableBody.innerHTML = '';
+                universities.forEach(univ => {
+                    const row = tableBody.insertRow();
+                    row.innerHTML = `
+                        <td>${univ.university_id}</td>
+                        <td>${univ.university_name}</td>
+                        <td>${univ.total_students}</td>
+                        <td>${univ.average_grade}</td>
+                        <td>${univ.graduation_percentage}</td>
+                        <td><button class="delete-btn" onclick="deleteUniversity('${univ.university_name}')">Delete</button></td>
+                    `;
+                });
+            }
+
+            function updateAdminTable(admins) {
+                const tableBody = document.getElementById('adminTable');
+                tableBody.innerHTML = '';
+                admins.forEach(admin => {
+                    const row = tableBody.insertRow();
+                    row.innerHTML = `
+                        <td>${admin.username}</td>
+                        <td>${admin.university_name}</td>
+                        <td><button class="delete-btn" onclick="removeAdmin(${admin.admin_id})">Delete</button></td>
+                    `;
+                });
+            }
+
+            function updateStudentTable(students) {
+                const tableBody = document.getElementById('studentTable');
+                tableBody.innerHTML = '';
+                if (students.length === 0) {
+                    const row = tableBody.insertRow();
+                    row.innerHTML = '<td colspan="3">No students found</td>';
+                } else {
+                    students.forEach(student => {
+                        const row = tableBody.insertRow();
+                        row.innerHTML = `
+                            <td>${student.name}</td>
+                            <td>${student.total_subjects}</td>
+                            <td>${student.status}</td>
+                        `;
+                    });
+                }
+            }
+
+            function updateNecessarySubjectsTable(subjects) {
+                const tableBody = document.querySelector('#necessarySubjectsTable tbody');
+                tableBody.innerHTML = '';
+                subjects.forEach(subject => {
+                    const row = tableBody.insertRow();
+                    row.innerHTML = `
+                        <td>${subject.name}</td>
+                        <td><button class="delete-btn" onclick="deleteNecessarySubject(${subject.subject_id})">Delete</button></td>
+                    `;
+                });
+            }
+
+            // Chart Setup
+            const ctx = document.getElementById('analyticsChart').getContext('2d');
+            let analyticsChart;
+
+            function updateChart() {
+                fetch('/get_all_universities_performance')
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log("Chart data fetched:", data);
+                        const labels = data.map(u => u.university_name);
+                        const avgGrades = data.map(u => u.average_grade);
+                        const gradPercents = data.map(u => u.graduation_percentage);
+
+                        if (analyticsChart) analyticsChart.destroy();
+
+                        analyticsChart = new Chart(ctx, {
+                            type: 'line',
+                            data: {
+                                labels: labels,
+                                datasets: [
+                                    {
+                                        label: 'Average Grade',
+                                        data: avgGrades,
+                                        borderColor: 'rgba(76, 175, 80, 1)',
+                                        backgroundColor: 'rgba(76, 175, 80, 0.2)',
+                                        fill: true,
+                                        borderWidth: 2
+                                    },
+                                    {
+                                        label: 'Graduation Percentage',
+                                        data: gradPercents,
+                                        borderColor: 'rgba(33, 150, 243, 1)',
+                                        backgroundColor: 'rgba(33, 150, 243, 0.2)',
+                                        fill: true,
+                                        borderWidth: 2
+                                    }
+                                ]
+                            },
+                            options: {
+                                responsive: true,
+                                scales: { y: { beginAtZero: true, max: 100 } }
+                            }
+                        });
+                    })
+                    .catch(error => console.error('Error updating chart:', error));
+            }
+
+            // Event Handlers
+            document.getElementById('universityForm').addEventListener('submit', function (e) {
+                e.preventDefault();
+                const name = document.getElementById('universityName').value.trim();
+                if (!name) return alert("Enter a university name");
+                fetch('/add_university', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Add university response:", data);
+                    if (data.success) {
+                        alert('University added successfully!');
+                        document.getElementById('universityName').value = '';
+                        loadAllData();
+                    } else {
+                        alert('Error adding university: ' + (data.error || 'Unknown error'));
+                    }
+                })
+                .catch(error => console.error('Error adding university:', error));
+            });
+
+            document.getElementById('adminForm').addEventListener('submit', function (e) {
+                e.preventDefault();
+                const universityId = document.getElementById('universityId').value.trim();
+                const login = document.getElementById('login').value.trim();
+                const password = document.getElementById('password').value.trim();
+                if (!universityId || !login || !password) return alert('Please fill in all fields');
+                fetch('/assign_admin', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ university_id: universityId, username: login, password })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Assign admin response:", data);
+                    if (data.success) {
+                        alert('Admin assigned successfully!');
+                        document.getElementById('universityId').value = '';
+                        document.getElementById('login').value = '';
+                        document.getElementById('password').value = '';
+                        loadAllData();
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => console.error('Error assigning admin:', error));
+            });
+
+            document.getElementById('necessarySubjectForm').addEventListener('submit', function (e) {
+                e.preventDefault();
+                const subjectName = document.getElementById('newSubject').value.trim();
+                console.log("Attempting to add subject:", subjectName);
+                if (!subjectName) {
+                    alert('Please enter a subject name');
+                    return;
+                }
+                fetch('/add_necessary_subject', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ subject: subjectName })
+                })
+                .then(response => {
+                    console.log("Response status:", response.status);
+                    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Add subject response:", data);
+                    if (data.success) {
+                        alert(data.message || 'Subject added successfully!');
+                        document.getElementById('newSubject').value = '';
+                        loadAllData();
+                    } else {
+                        alert(data.message || 'Error adding subject');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error adding subject:', error);
+                    alert('An error occurred while adding the subject: ' + error.message);
+                });
+            });
+
+            document.getElementById('universityFilter').addEventListener('change', function () {
+                console.log("University filter changed to:", this.value);
+                fetchStudents();
+            });
+
+            // Delete Functions
+            window.deleteUniversity = function (name) {
+                if (!confirm('Are you sure you want to delete this university?')) return;
+                fetch('/delete_university', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Delete university response:", data);
+                    if (data.success) {
+                        alert('University deleted successfully!');
+                        loadAllData();
+                    } else {
+                        alert('Error deleting university');
+                    }
+                })
+                .catch(error => console.error('Error deleting university:', error));
+            };
+
+            window.deleteNecessarySubject = function (subjectId) {
+                if (!confirm('Are you sure you want to delete this subject?')) return;
+                fetch('/delete_necessary_subject', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ subject_id: subjectId })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Delete necessary subject response:", data);
+                    if (data.success) {
+                        alert(data.message || 'Subject deleted successfully!');
+                        loadAllData();
+                    } else {
+                        alert('Error deleting subject');
+                    }
+                })
+                .catch(error => console.error('Error deleting necessary subject:', error));
+            };
+
+            window.removeAdmin = function (adminId) {
+                if (!confirm('Are you sure you want to delete this admin?')) return;
+                fetch('/delete_admin', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ admin_id: adminId })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Delete admin response:", data);
+                    if (data.success) {
+                        alert('Admin deleted successfully!');
+                        loadAllData();
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => console.error('Error deleting admin:', error));
+            };
+        });
+    </script>
+</body>
+</html>

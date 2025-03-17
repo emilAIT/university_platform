@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subjects</title>
+    <link rel="stylesheet" href="static/admin.css">
+</head>
+<body>
+    <div class="main-container">
+        <nav class="sidebar">
+            <ul>
+                <li><a href="index.html">Dashboard</a></li>
+                <li><a href="registered_students.html">Registered Students</a></li>
+                <li><a href="registered_teachers.html">Registered Teachers</a></li>
+                <li><a href="subjects.html">Subjects</a></li>
+            </ul>
+        </nav>
+        <div class="content">
+            <h1>Subjects</h1>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Subject Name</th>
+                        <th>Assigned Teacher</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for subject in subjects %}
+                    <tr>
+                        <td>{{ subject[1] }}</td>
+                        <td>{{ subject[2] }}</td>
+                        <td>
+                            <button class="delete-btn" onclick="deleteSubject('{{ subject[0] }}')">Delete</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <h2>Add New Subject</h2>
+            <input type="text" id="subjectName" placeholder="Subject Name">
+            <select id="teacherSelect">
+                {% for teacher in teachers %}
+                <option value="{{ teacher[0] }}">{{ teacher[1] }}</option>
+                {% endfor %}
+            </select>
+            <button onclick="addSubject()">Add Subject</button>
+        </div>
+    </div>
+
+    <script>
+        function addSubject() {
+            let name = document.getElementById('subjectName').value;
+            let teacherId = document.getElementById('teacherSelect').value;
+
+            fetch('/add_subject', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, teacherId })
+            }).then(() => location.reload());
+        }
+
+        function deleteSubject(subjectId) {
+            fetch(`/delete_subject/${subjectId}`, { method: 'DELETE' })
+                .then(() => location.reload());
+        }
+    </script>
+</body>
+</html>

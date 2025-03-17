@@ -1,0 +1,269 @@
+/* Google Font Import */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+/* Global Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Body Styles */
+body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460, #533483);
+    background-size: 400% 400%;
+    animation: gradientBG 12s ease infinite;
+    overflow: hidden;
+    /* Prevent scrollbars */
+}
+
+/* Gradient Background Animation */
+@keyframes gradientBG {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* Login Container */
+.login-container {
+    position: relative;
+    background: rgba(255, 255, 255, 0.05);
+    /* Glassmorphism effect */
+    backdrop-filter: blur(10px);
+    /* Enhanced blur */
+    padding: 40px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+    width: 400px;
+    /* Slightly wider */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    z-index: 1;
+}
+
+.login-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+}
+
+/* Animated Background Particles (Optional Effect) */
+.login-container::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 10%, transparent 10%);
+    background-size: 20px 20px;
+    opacity: 0.3;
+    animation: particleFloat 20s linear infinite;
+    z-index: -1;
+}
+
+@keyframes particleFloat {
+    0% {
+        transform: translate(0, 0);
+    }
+
+    100% {
+        transform: translate(-100px, -100px);
+    }
+}
+
+/* Headings */
+h2 {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+p {
+    color: #ccc;
+    font-size: 0.9rem;
+    font-weight: 300;
+    margin-bottom: 25px;
+}
+
+/* Flash Messages */
+.flash-messages {
+    margin-bottom: 20px;
+}
+
+.flash-messages p {
+    font-size: 0.85rem;
+    padding: 8px 15px;
+    border-radius: 6px;
+    margin: 5px 0;
+}
+
+.flash-messages .error {
+    background: rgba(231, 76, 60, 0.2);
+    color: #e74c3c;
+    border: 1px solid rgba(231, 76, 60, 0.5);
+}
+
+.flash-messages .success {
+    background: rgba(46, 204, 113, 0.2);
+    color: #2ecc71;
+    border: 1px solid rgba(46, 204, 113, 0.5);
+}
+
+/* Form Styling */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Input Group */
+.input-group {
+    position: relative;
+    margin-bottom: 0;
+    /* Gap handled by form */
+}
+
+/* Icon Styling */
+.input-group i {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #aaa;
+    font-size: 1rem;
+    transition: color 0.3s ease;
+}
+
+/* Input and Select Styling */
+input,
+select {
+    width: 100%;
+    padding: 14px 45px;
+    /* Extra padding for icons */
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 400;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+/* Glowing Focus Effect */
+input:focus,
+select:focus {
+    border-color: #00aaff;
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 10px rgba(0, 170, 255, 0.5);
+}
+
+input:focus+i,
+select:focus+i {
+    color: #00aaff;
+}
+
+/* Placeholder Styling */
+input::placeholder,
+select:invalid {
+    color: #aaa;
+    font-weight: 300;
+}
+
+/* Fix Autofill Background */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+    background: rgba(255, 255, 255, 0.1) !important;
+    -webkit-text-fill-color: #fff !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Custom Dropdown */
+select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    padding: 14px 15px;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.1) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="white" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>') no-repeat right 15px center;
+}
+
+select option {
+    background: #1a1a2e;
+    color: #fff;
+}
+
+/* Button Styling */
+button {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #00aaff, #0077cc);
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 170, 255, 0.3);
+}
+
+button:hover {
+    background: linear-gradient(135deg, #0077cc, #00aaff);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 170, 255, 0.5);
+}
+
+button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 10px rgba(0, 170, 255, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+    .login-container {
+        width: 90%;
+        padding: 30px 20px;
+    }
+
+    h2 {
+        font-size: 1.6rem;
+    }
+
+    p {
+        font-size: 0.8rem;
+    }
+
+    input,
+    select,
+    button {
+        padding: 12px;
+        font-size: 0.9rem;
+    }
+
+    .input-group i {
+        font-size: 0.9rem;
+    }
+}
