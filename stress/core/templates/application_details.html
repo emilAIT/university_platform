@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="section">
+    <div class="dashboard-header">
+        <h2>Application Details for {{ student.username }}</h2>
+    </div>
+
+    <div class="section">
+        <h3>Grades</h3>
+        {% if enrollments.exists %}
+            <table class="applications-table">
+                <thead>
+                    <tr>
+                        <th>Subject</th>
+                        <th>Code</th>
+                        <th>Mandatory</th>
+                        <th>Grade</th>
+                        <th>Date Added</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for enrollment in enrollments %}
+                        <tr>
+                            <td>{{ enrollment.subject.name }}</td>
+                            <td>{{ enrollment.subject.code }}</td>
+                            <td>{{ enrollment.subject.is_mandatory|yesno:"Yes,No" }}</td>
+                            <td>
+                                {% if enrollment.grade %}
+                                    {{ enrollment.grade.score }}
+                                {% else %}
+                                    No grade
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if enrollment.grade %}
+                                    {{ enrollment.grade.date_added|date:"d.m.Y" }}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No grades available for this student.</p>
+        {% endif %}
+    </div>
+
+    <div class="section">
+        <a href="{% url 'admin_dashboard' %}" class="btn btn-primary">Back to Dashboard</a>
+    </div>
+</div>
+{% endblock %}

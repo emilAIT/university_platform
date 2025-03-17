@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="section">
+    <div class="dashboard-header">
+        <h2>Notifications</h2>
+    </div>
+
+    <div class="section">
+        <form method="post" class="dashboard-actions">
+            {% csrf_token %}
+            <input type="hidden" name="mark_read" value="true">
+            <button type="submit" class="btn btn-primary">Mark All as Read</button>
+        </form>
+    </div>
+
+    <div class="section">
+        {% if notifications.exists %}
+            <table class="applications-table">
+                <thead>
+                    <tr>
+                        <th>Message</th>
+                        <th>Sender</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for notification in notifications %}
+                        <tr>
+                            <td>{{ notification.message }}</td>
+                            <td>{{ notification.sender.username|default:"System" }}</td>
+                            <td>{{ notification.created_at|date:"d.m.Y H:i" }}</td>
+                            <td>{{ notification.is_read|yesno:"Read,Unread" }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No notifications</p>
+        {% endif %}
+    </div>
+
+    <div class="section">
+        <a href="{% if user.role == 'student' %}{% url 'student_dashboard' %}{% elif user.role == 'professor' %}{% url 'professor_dashboard' %}{% else %}{% url 'admin_dashboard' %}{% endif %}" class="btn btn-primary">Back to Dashboard</a>
+    </div>
+</div>
+{% endblock %}

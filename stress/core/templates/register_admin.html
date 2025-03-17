@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="section">
+    <div class="dashboard-header">
+        <h2>Register Admin</h2>
+    </div>
+
+    <div class="section">
+        <form method="post">
+            {% csrf_token %}
+            <label for="username">Admin Username:</label>
+            <input type="text" id="username" name="username" required>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+            <label for="university_id">Select University:</label>
+            <select id="university_id" name="university_id" required>
+                {% for university in universities %}
+                    <option value="{{ university.id }}">{{ university.name }}</option>
+                {% endfor %}
+            </select>
+            <div class="dashboard-actions">
+                <button type="submit" class="btn btn-primary">Register Admin</button>
+            </div>
+        </form>
+    </div>
+
+    {% if notification %}
+        <div class="section">
+            <div class="notification {{ notification_type }}">
+                {{ notification }}
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="section">
+        <a href="{% url 'super_admin_dashboard' %}" class="btn btn-primary">Back to Dashboard</a>
+    </div>
+</div>
+{% endblock %}
