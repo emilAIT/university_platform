@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="section">
+    <div class="dashboard-header">
+        <h2>Register Subject</h2>
+    </div>
+
+    <div class="section">
+        <form method="post">
+            {% csrf_token %}
+            <label for="name">Subject Name:</label>
+            <input type="text" id="name" name="name" required>
+            <label for="code">Subject Code:</label>
+            <input type="text" id="code" name="code" required>
+            <label for="mandatory_subject">Mandatory Subject (Optional):</label>
+            <select id="mandatory_subject" name="mandatory_subject">
+                <option value="">None</option>
+                {% for subject in mandatory_subjects %}
+                    <option value="{{ subject.id }}">{{ subject.name }}</option>
+                {% endfor %}
+            </select>
+            <div class="dashboard-actions">
+                <button type="submit" class="btn btn-primary">Register</button>
+            </div>
+        </form>
+    </div>
+
+    {% if notification %}
+        <div class="section">
+            <div class="notification {{ notification_type }}">
+                {{ notification }}
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="section">
+        <a href="{% url 'admin_dashboard' %}" class="btn btn-primary">Back to Dashboard</a>
+    </div>
+</div>
+{% endblock %}

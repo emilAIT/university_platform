@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="section">
+    <div class="dashboard-header">
+        <h2>Register Mandatory Subject</h2>
+    </div>
+
+    <div class="section">
+        <form method="post">
+            {% csrf_token %}
+            <label for="name">Subject Name:</label>
+            <input type="text" id="name" name="name" required>
+            <label>Select Universities (optional, can be added later):</label>
+            <div class="checkbox-group">
+                {% for university in universities %}
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" name="universities" value="{{ university.id }}" id="university_{{ university.id }}">
+                        <label for="university_{{ university.id }}">{{ university.name }}</label>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="dashboard-actions">
+                <button type="submit" class="btn btn-primary">Register Subject</button>
+            </div>
+        </form>
+        <p class="note">Note: You can add or remove universities for this subject later in the Mandatory Subjects table on the dashboard.</p>
+    </div>
+
+    {% if notification %}
+        <div class="section">
+            <div class="notification {{ notification_type }}">
+                {{ notification }}
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="section">
+        <a href="{% url 'super_admin_dashboard' %}" class="btn btn-primary">Back to Dashboard</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="section">
+    <div class="dashboard-header">
+        <h2>Professor Dashboard</h2>
+    </div>
+
+    <div class="section">
+        <h3>My Subjects</h3>
+        {% for subject in professor_subjects %}
+            <h4>{{ subject.name }} ({{ subject.code }})</h4>
+            {% if subject.enrollment_set.all.exists %}
+                <table class="applications-table">
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Current Grade</th>
+                            <th>Set Grade</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for enrollment in subject.enrollment_set.all %}
+                            <tr>
+                                <td>{{ enrollment.student.username }}</td>
+                                <td>
+                                    {% if enrollment.grade %}
+                                        {{ enrollment.grade.score }} ({{ enrollment.grade.date_added|date:"d.m.Y" }})
+                                    {% else %}
+                                        No grade
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <form method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="enrollment_id" value="{{ enrollment.id }}">
+                                        <div class="grade-input-wrapper">
+                                            <span class="grade-icon">📝</span>
+                                            <input type="number" name="score" min="0" max="100" step="0.1"
+                                                   value="{{ enrollment.grade.score|default_if_none:'' }}"
+                                                   required placeholder="0-100">
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Set/Update</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No students enrolled in this subject yet</p>
+            {% endif %}
+        {% empty %}
+            <p>You have no assigned subjects yet</p>
+        {% endfor %}
+    </div>
+
+    <div class="section">
+        <h3>Grade Requests</h3>
+        {% if grade_requests.exists %}
+            <table class="applications-table">
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Subject</th>
+                        <th>Message</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for request in grade_requests %}
+                        <tr>
+                            <td>{{ request.sender.username }}</td>
+                            <td>{{ request.message|slice:"*:requests a grade for "|cut:"requests a grade for " }}</td>
+                            <td>{{ request.message }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No pending grade requests</p>
+        {% endif %}
+    </div>
+
+    <div class="section">
+        <h3>Available Subjects</h3>
+        {% if available_subjects.exists %}
+            <table class="applications-table">
+                <thead>
+                    <tr>
+                        <th>Subject</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for subject in available_subjects %}
+                        <tr>
+                            <td>{{ subject.name }} ({{ subject.code }})</td>
+                            <td>
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="subject_id" value="{{ subject.id }}">
+                                    <button type="submit" class="btn btn-primary">Take Subject</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No available subjects</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="super-admin-dashboard">
+    <div class="dashboard-header">
+        <h2>Super Admin Dashboard</h2>
+    </div>
+
+    <div class="section">
+        <h3>Manage Universities</h3>
+        <div class="dashboard-actions">
+            <a href="{% url 'register_university' %}" class="btn btn-primary">Register New University</a>
+        </div>
+    </div>
+
+    <div class="section">
+        <h3>Manage Mandatory Subjects</h3>
+        <div class="dashboard-actions">
+            <a href="{% url 'register_mandatory_subject' %}" class="btn btn-primary">Register New Mandatory Subject</a>
+        </div>
+    </div>
+
+    <div class="section">
+        <h3>Mandatory Subjects</h3>
+        {% if mandatory_subjects.exists %}
+            <table class="university-table">
+                <thead>
+                    <tr>
+                        <th>Subject Name</th>
+                        <th>Universities</th>
+                        <th>Manage Universities</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for subject in mandatory_subjects %}
+                        <tr>
+                            <td>{{ subject.name }}</td>
+                            <td>
+                                {% for university in subject.universities.all %}
+                                    {{ university.name }}{% if not forloop.last %}, {% endif %}
+                                {% empty %}
+                                    <span>No universities assigned</span>
+                                {% endfor %}
+                            </td>
+                            <td>
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="subject_id" value="{{ subject.id }}">
+                                    <select name="university_id" required>
+                                        <option value="">Select University</option>
+                                        {% for university in universities %}
+                                            {% if university not in subject.universities.all %}
+                                                <option value="{{ university.id }}">{{ university.name }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                    <button type="submit" class="btn btn-primary" name="action" value="add">Add University</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No mandatory subjects added yet.</p>
+        {% endif %}
+    </div>
+
+    <div class="section">
+        <h3>Create University Admin</h3>
+        <div class="dashboard-actions">
+            <a href="{% url 'register_admin' %}" class="btn btn-primary">Register New Admin</a>
+        </div>
+    </div>
+
+    <div class="section">
+        <h3>University Statistics</h3>
+        <table class="university-table">
+            <thead>
+                <tr>
+                    <th>University Name</th>
+                    <th>Admin</th>
+                    <th>Student Count</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for stat in university_stats %}
+                    <tr>
+                        <td>{{ stat.university.name }}</td>
+                        <td>{{ stat.university.admin.username|default:"No admin" }}</td>
+                        <td>{{ stat.student_count }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <h3>Student Requests</h3>
+        {% if pending_requests.exists %}
+            {% for request in pending_requests %}
+                <div style="margin-bottom: 20px; border: 1px solid #ccc; padding: 10px; border-radius: 8px; background: var(--form-bg); box-shadow: var(--form-shadow);">
+                    <p>Request from {{ request.student.username }} via Admin {{ request.admin.username }} (University: {{ request.university.name }})</p>
+                    <button class="btn btn-primary" onclick="showDetails('{{ request.id }}')">Details</button>
+                    <form method="post" style="display: inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="request_id" value="{{ request.id }}">
+                        <input type="hidden" name="action" value="approve">
+                        <button type="submit" class="btn btn-primary">Approve</button>
+                    </form>
+                    <form method="post" style="display: inline; margin-left: 10px;">
+                        {% csrf_token %}
+                        <input type="hidden" name="request_id" value="{{ request.id }}">
+                        <input type="hidden" name="action" value="deny">
+                        <div class="reason-input-wrapper">
+                            <span class="reason-icon">✖</span>
+                            <textarea name="reason" placeholder="Reason for denial" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="background-color: #f44336;">Deny</button>
+                    </form>
+                    <div id="details-{{ request.id }}" class="request-details" style="display: none;">
+                        <h4>Student Details</h4>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Student Name</th>
+                                    <th>Mandatory Subject</th>
+                                    <th>Grade</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for grade in request.student_grades.all %}
+                                    <tr>
+                                        <td>{{ grade.student.username }}</td>
+                                        <td>{{ grade.mandatory_subject.name }}</td>
+                                        <td>{{ grade.grade|default:"No grade" }}</td>
+                                    </tr>
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="3">No grades available for this request.</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No pending requests to review.</p>
+        {% endif %}
+    </div>
+
+    {% if notification %}
+        <div class="section">
+            <div class="notification {{ notification_type }}">
+                {{ notification }}
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+    function showDetails(requestId) {
+        const details = document.getElementById(`details-${requestId}`);
+        details.style.display = details.style.display === 'block' ? 'none' : 'block';
+    }
+</script>
+{% endblock %}

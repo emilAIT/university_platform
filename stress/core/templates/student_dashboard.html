@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="student-dashboard">
+    <div class="dashboard-header">
+        <h2>Student Dashboard - {{ request.user.username }}</h2>
+        <h3>University: {{ university.name }}</h3>
+        <p>Academic Status: {{ status }}</p>
+    </div>
+
+    <div class="section">
+        <h3>Available Subjects</h3>
+        {% if available_subjects.exists %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Subject</th>
+                        <th>Code</th>
+                        <th>Mandatory</th>
+                        <th>Professor</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for subject in available_subjects %}
+                        <tr>
+                            <td>{{ subject.name }}</td>
+                            <td>{{ subject.code }}</td>
+                            <td>{{ subject.is_mandatory|yesno:"Yes,No" }}</td>
+                            <td>{{ subject.professor.username|default:"No professor" }}</td>
+                            <td>
+                                <form method="post" style="display: inline;">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="subject_id" value="{{ subject.id }}">
+                                    <button type="submit" class="btn btn-primary">Enroll</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No available subjects to enroll in.</p>
+        {% endif %}
+    </div>
+
+    <div class="section">
+        <h3>Your Enrollments</h3>
+        {% if enrollments.exists %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Subject</th>
+                        <th>Code</th>
+                        <th>Mandatory</th>
+                        <th>Professor</th>
+                        <th>Grade</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for enrollment in enrollments %}
+                        <tr>
+                            <td>{{ enrollment.subject.name }}</td>
+                            <td>{{ enrollment.subject.code }}</td>
+                            <td>{{ enrollment.subject.is_mandatory|yesno:"Yes,No" }}</td>
+                            <td>{{ enrollment.subject.professor.username|default:"No professor" }}</td>
+                            <td>
+                                {% for grade in grades %}
+                                    {% if grade.enrollment == enrollment %}
+                                        {{ grade.score }}
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
+                            <td>
+                                {% if can_request_grade %}
+                                    <form method="post" style="display: inline;">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="request_grade" value="1">
+                                        <input type="hidden" name="enrollment_id" value="{{ enrollment.id }}">
+                                        <button type="submit" class="btn btn-primary">Request Grade</button>
+                                    </form>
+                                {% else %}
+                                    <p>Cannot request grade</p>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>You are not enrolled in any subjects.</p>
+        {% endif %}
+    </div>
+
+    <div class="section">
+        <h3>Submit Application</h3>
+        {% if can_submit_request %}
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="application" value="1">
+                <button type="submit" class="btn btn-primary">Submit Application to Admin</button>
+            </form>
+        {% else %}
+            <p>You cannot submit an application at this time. You either have an active request or have already passed.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

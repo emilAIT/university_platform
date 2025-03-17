@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stress - Student Management System</title>
+    <style>
+        /* Остальные стили без изменений */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --background: linear-gradient(135deg, #f0f4f8, #d9e2f2);
+            --text-color: #2c3e50;
+            --header-bg: #2c3e50;
+            --header-text: #ffffff;
+            --table-header-bg: #ecf0f1;
+            --table-row-hover: #e0e8f0;
+            --primary-color: #6a0dad;
+            --primary-hover: #4b077a;
+            --form-bg: #ffffff;
+            --form-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            --input-border: #d0d0d0;
+            --input-icon-color: #666;
+            --error-bg: #f8d7da;
+            --error-text: #721c24;
+            --logout-color: #3498db;
+            --logout-hover: #2980b9;
+            --button-text-color: white;
+            --danger-link-color: #e74c3c;
+            --danger-link-hover: #c0392b;
+            --square-color: rgba(255, 255, 255, 0.3);
+            --glow-color: rgba(255, 255, 255, 0.5);
+            --animation-glow: rgba(255, 255, 255, 0.4);
+            --pulse-color: rgba(255, 255, 255, 0.3);
+            --select-bg: rgba(255, 255, 255, 0.1);
+            --select-border: #d0d0d0;
+            --select-text: #2c3e50;
+            --select-hover: #e0e8f0;
+        }
+
+        body {
+            background: var(--background);
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            transition: all 0.5s ease-in-out;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Тема День */
+        body.day {
+            --background: linear-gradient(135deg, #fffde7, #e6f0fa);
+            --text-color: #2c2f3a;
+            --header-bg: linear-gradient(90deg, #ffd54f, #4fc3f7);
+            --header-text: #ffffff;
+            --table-header-bg: #fff9c4;
+            --table-row-hover: #bbdefb;
+            --primary-color: #0288d1;
+            --primary-hover: #01579b;
+            --form-bg: rgba(255, 255, 255, 0.9);
+            --form-shadow: 0 15px 30px rgba(2, 136, 209, 0.3), 0 0 20px rgba(79, 195, 247, 0.2);
+            --input-border: #b3e5fc;
+            --input-icon-color: #0288d1;
+            --error-bg: #ffebee;
+            --error-text: #c0392b;
+            --logout-color: #1e90ff;
+            --logout-hover: #1565c0;
+            --button-text-color: #ffffff;
+            --danger-link-color: #d32f2f;
+            --danger-link-hover: #b71c1c;
+            --square-color: rgba(79, 195, 247, 0.7);
+            --glow-color: rgba(2, 136, 209, 0.7);
+            --animation-glow: rgba(79, 195, 247, 0.5);
+            --pulse-color: rgba(79, 195, 247, 0.4);
+            --select-bg: rgba(255, 255, 255, 0.2);
+            --select-border: #b3e5fc;
+            --select-text: #2c2f3a;
+            --select-hover: #e1f5fe;
+        }
+
+        /* Тема Ночь */
+        body.night {
+            --background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            --text-color: #b3e5fc;
+            --header-bg: linear-gradient(90deg, #6b48ff, #00d2ff);
+            --header-text: #ffffff;
+            --table-header-bg: #3a3f74;
+            --table-row-hover: #4a4e92;
+            --primary-color: #00d2ff;
+            --primary-hover: #0097e6;
+            --form-bg: rgba(15, 12, 41, 0.9);
+            --form-shadow: 0 15px 30px rgba(0, 210, 255, 0.4), 0 0 25px rgba(107, 72, 255, 0.3);
+            --input-border: #5c5e9a;
+            --input-icon-color: #6b48ff;
+            --error-bg: #6b7280;
+            --error-text: #e0f7fa;
+            --logout-color: #ff4081;
+            --logout-hover: #f50057;
+            --button-text-color: #ffffff;
+            --danger-link-color: #ff6b6b;
+            --danger-link-hover: #ff4040;
+            --square-color: rgba(0, 210, 255, 0.4);
+            --glow-color: rgba(0, 210, 255, 0.6);
+            --animation-glow: rgba(107, 72, 255, 0.5);
+            --pulse-color: rgba(0, 210, 255, 0.3);
+            --select-bg: rgba(15, 12, 41, 0.5);
+            --select-border: #5c5e9a;
+            --select-text: #b3e5fc;
+            --select-hover: #4a4e92;
+        }
+
+        /* Тема Звезда */
+        body.star {
+            --background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            --text-color: #e0f7fa;
+            --header-bg: linear-gradient(90deg, #1a2980, #26d0ce);
+            --header-text: #ffffff;
+            --table-header-bg: #2a4066;
+            --table-row-hover: #34495e;
+            --primary-color: #6c5ce7;
+            --primary-hover: #4a00e0;
+            --form-bg: rgba(15, 32, 39, 0.9);
+            --form-shadow: 0 15px 30px rgba(108, 92, 231, 0.4), 0 0 25px rgba(38, 208, 206, 0.3);
+            --input-border: #4a6070;
+            --input-icon-color: #26d0ce;
+            --error-bg: #721c24;
+            --error-text: #ffcccc;
+            --logout-color: #ffeb3b;
+            --logout-hover: #f9a825;
+            --button-text-color: #ffffff;
+            --danger-link-color: #ff6b6b;
+            --danger-link-hover: #ff4040;
+            --square-color: rgba(108, 92, 231, 0.4);
+            --glow-color: rgba(108, 92, 231, 0.6);
+            --animation-glow: rgba(38, 208, 206, 0.5);
+            --pulse-color: rgba(108, 92, 231, 0.3);
+            --select-bg: rgba(15, 32, 39, 0.5);
+            --select-border: #4a6070;
+            --select-text: #e0f7fa;
+            --select-hover: #34495e;
+        }
+
+        /* Тема Виктория */
+        body.victoria {
+            --background: linear-gradient(135deg, #1e1e2f, #2a2f4a);
+            --text-color: #e0e0e0;
+            --header-bg: #1c1c2e;
+            --header-text: #ffd1dc;
+            --table-header-bg: #2e2e44;
+            --table-row-hover: #3e3e5a;
+            --primary-color: #ff69b4;
+            --primary-hover: #ff1493;
+            --form-bg: #252a44;
+            --form-shadow: 0 10px 20px rgba(255, 105, 180, 0.3), 0 0 10px rgba(255, 105, 180, 0.5);
+            --input-border: #7a7aa3;
+            --input-icon-color: #ff69b4;
+            --error-bg: #5a4e6a;
+            --error-text: #ffd1dc;
+            --logout-color: #00e676;
+            --logout-hover: #00c853;
+            --button-text-color: #ffffff;
+            --danger-link-color: #ff6b6b;
+            --danger-link-hover: #ff4040;
+            --square-color: rgba(255, 105, 180, 0.4);
+            --glow-color: rgba(255, 105, 180, 0.6);
+            --animation-glow: rgba(255, 105, 180, 0.5);
+            --pulse-color: rgba(255, 105, 180, 0.3);
+            --select-bg: rgba(37, 42, 68, 0.5);
+            --select-border: #7a7aa3;
+            --select-text: #e0e0e0;
+            --select-hover: #3e3e5a;
+        }
+
+        /* Стили для плавающих квадратов */
+        .floating-squares-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .floating-square {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: var(--square-color);
+            border-radius: 4px;
+            pointer-events: none;
+            animation: floatSquare 10s linear forwards; /* Изменил на forwards, чтобы квадратики не перезапускались */
+        }
+
+        body.day .floating-square {
+            width: 25px;
+            height: 25px;
+            box-shadow: 0 0 10px rgba(79, 195, 247, 0.5);
+        }
+
+        @keyframes floatSquare {
+            0% {
+                transform: translate(var(--start-x), var(--start-y)) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.8;
+            }
+            90% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translate(var(--end-x), var(--end-y)) scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        /* Контейнер для контента с анимацией перехода */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            padding-top: 70px;
+            position: relative;
+            z-index: 1;
+            animation: pageFadeIn 0.5s ease-in-out forwards;
+            opacity: 0; /* Начальное состояние для анимации */
+        }
+
+        /* Анимация появления страницы */
+        @keyframes pageFadeIn {
+            0% {
+                opacity: 0;
+                transform: translateX(-20px); /* Сдвиг влево */
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Анимация ухода страницы */
+        @keyframes pageFadeOut {
+            0% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            100% {
+                opacity: 0;
+                transform: translateX(20px); /* Сдвиг вправо */
+            }
+        }
+
+        /* Класс для анимации ухода */
+        .page-exit {
+            animation: pageFadeOut 0.5s ease-in-out forwards;
+        }
+
+        /* Разные эффекты для тем */
+        body.day .container {
+            animation: pageFadeInDay 0.5s ease-in-out forwards;
+        }
+
+        body.day .page-exit {
+            animation: pageFadeOutDay 0.5s ease-in-out forwards;
+        }
+
+        @keyframes pageFadeInDay {
+            0% {
+                opacity: 0;
+                transform: translateX(-20px);
+                filter: brightness(0.8);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+                filter: brightness(1);
+            }
+        }
+
+        @keyframes pageFadeOutDay {
+            0% {
+                opacity: 1;
+                transform: translateX(0);
+                filter: brightness(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateX(20px);
+                filter: brightness(0.8);
+            }
+        }
+
+        body.night .container {
+            animation: pageFadeInNight 0.5s ease-in-out forwards;
+        }
+
+        body.night .page-exit {
+            animation: pageFadeOutNight 0.5s ease-in-out forwards;
+        }
+
+        @keyframes pageFadeInNight {
+            0% {
+                opacity: 0;
+                transform: scale(0.95);
+                filter: blur(2px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+                filter: blur(0);
+            }
+        }
+
+        @keyframes pageFadeOutNight {
+            0% {
+                opacity: 1;
+                transform: scale(1);
+                filter: blur(0);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(0.95);
+                filter: blur(2px);
+            }
+        }
+
+        body.star .container {
+            animation: pageFadeInStar 0.5s ease-in-out forwards;
+        }
+
+        body.star .page-exit {
+            animation: pageFadeOutStar 0.5s ease-in-out forwards;
+        }
+
+        @keyframes pageFadeInStar {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+                filter: brightness(0.7);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+                filter: brightness(1);
+            }
+        }
+
+        @keyframes pageFadeOutStar {
+            0% {
+                opacity: 1;
+                transform: translateY(0);
+                filter: brightness(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-20px);
+                filter: brightness(0.7);
+            }
+        }
+
+        /* Восстановленные анимации для Виктории */
+        body.victoria .container {
+            animation: pageFadeInVictoria 0.5s ease-in-out forwards;
+        }
+
+        body.victoria .page-exit {
+            animation: pageFadeOutVictoria 0.5s ease-in-out forwards;
+        }
+
+        @keyframes pageFadeInVictoria {
+            0% {
+                opacity: 0;
+                transform: rotate(2deg);
+                filter: brightness(0.8);
+            }
+            100% {
+                opacity: 1;
+                transform: rotate(0deg);
+                filter: brightness(1);
+            }
+        }
+
+        @keyframes pageFadeOutVictoria {
+            0% {
+                opacity: 1;
+                transform: rotate(0deg);
+                filter: brightness(1);
+            }
+            100% {
+                opacity: 0;
+                transform: rotate(-2deg);
+                filter: brightness(0.8);
+            }
+        }
+
+        /* Остальные стили без изменений */
+        header {
+            background: var(--header-bg);
+            color: var(--header-text);
+            padding: 15px 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        header h1 {
+            font-size: 28px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        a {
+            color: var(--logout-color);
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            padding: 5px 10px;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+        }
+
+        a:hover {
+            color: var(--logout-hover);
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+        }
+
+        form {
+            padding: 0;
+            margin: 0;
+            display: inline;
+            background: none;
+            border: none;
+        }
+
+        .btn, .btn-login, .btn-success {
+            position: relative;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+            color: var(--button-text-color);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+        }
+
+        .btn::before, .btn-login::before, .btn-success::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 150%;
+            height: 150%;
+            background: radial-gradient(circle, var(--animation-glow) 0%, transparent 70%);
+            transform: translate(-50%, -50%) scale(0);
+            opacity: 0;
+            transition: transform 0.5s ease, opacity 0.5s ease;
+            pointer-events: none;
+        }
+
+        .btn::after, .btn-login::after, .btn-success::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, var(--pulse-color), transparent);
+            transform: translateX(-100%);
+            animation: gradientPulse 2s linear infinite;
+            pointer-events: none;
+        }
+
+        .btn:hover, .btn-login:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3), 0 0 25px var(--glow-color);
+        }
+
+        .btn:hover::before, .btn-login:hover::before, .btn-success:hover::before {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+
+        body.day .btn:hover, body.day .btn-login:hover {
+            background: linear-gradient(135deg, #4fc3f7, #0288d1);
+        }
+
+        .btn-login {
+            padding: 15px;
+            font-size: 18px;
+            font-weight: 700;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-login:hover {
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4), 0 0 30px var(--glow-color);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+        }
+
+        .btn-success:hover {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            box-shadow: 0 8px 20px rgba(46, 204, 113, 0.4), 0 0 25px rgba(46, 204, 113, 0.6);
+        }
+
+        body.day .btn-success:active::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle, rgba(46, 204, 113, 0.6) 0%, transparent 70%);
+            opacity: 0;
+            animation: particleBurst 0.5s ease-out;
+            pointer-events: none;
+        }
+
+        @keyframes particleBurst {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; }
+        }
+
+        .btn-danger {
+            position: relative;
+            background: none;
+            border: none;
+            padding: 0;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--danger-link-color);
+            text-decoration: none;
+            cursor: pointer;
+            transition: color 0.3s ease, text-shadow 0.3s ease;
+            box-shadow: none;
+            display: inline-block;
+        }
+
+        .btn-danger::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--danger-link-color);
+            transition: width 0.3s ease;
+            pointer-events: none;
+        }
+
+        .btn-danger:hover {
+            color: var(--danger-link-hover);
+            text-shadow: 0 0 15px var(--danger-link-color);
+        }
+
+        .btn-danger:hover::after {
+            width: 100%;
+        }
+
+        table {
+            width: 100%;
+            background: var(--form-bg);
+            border-collapse: collapse;
+            margin-top: 15px;
+            box-shadow: var(--form-shadow);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        form label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: var(--text-color);
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+        }
+
+        form input, form select {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 18px;
+            border: 2px solid var(--input-border);
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-color);
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            position: relative;
+        }
+
+        form input:focus, form select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 15px var(--primary-color), inset 0 0 10px rgba(0, 0, 0, 0.1);
+            transform: scale(1.02);
+            outline: none;
+        }
+
+        form input::placeholder {
+            color: var(--input-icon-color);
+            opacity: 0.7;
+        }
+
+        form select {
+            background: var(--select-bg);
+            color: var(--select-text);
+            cursor: pointer;
+            position: relative;
+            padding-right: 40px;
+        }
+
+        form select::after {
+            content: '▼';
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+            color: var(--input-icon-color);
+            pointer-events: none;
+            transition: transform 0.3s ease;
+        }
+
+        form select:focus::after,
+        form select:hover::after {
+            transform: translateY(-50%) rotate(180deg);
+        }
+
+        form select option {
+            background: var(--select-bg);
+            color: var(--select-text);
+            padding: 10px;
+        }
+
+        form select:hover {
+            background: var(--select-hover);
+            border-color: var(--primary-color);
+        }
+
+        th {
+            background: var(--table-header-bg);
+            color: var(--text-color);
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+        }
+
+        tr:hover {
+            background: var(--table-row-hover);
+            transition: all 0.3s ease;
+        }
+
+        h2, h3 {
+            color: var(--text-color);
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        .dashboard-header {
+            margin-bottom: 25px;
+        }
+
+        .dashboard-header h2 {
+            font-size: 32px;
+            text-align: center;
+        }
+
+        .dashboard-actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .section {
+            margin-bottom: 35px;
+        }
+
+        .login-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: calc(100vh - 60px);
+            padding: 20px;
+            background: radial-gradient(circle, rgba(0,0,0,0.1) 0%, transparent 70%);
+        }
+
+        .login-container {
+            background: var(--form-bg);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: var(--form-shadow);
+            max-width: 450px;
+            width: 100%;
+            text-align: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .login-title {
+            font-size: 32px;
+            margin-bottom: 25px;
+            color: var(--text-color);
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.7);
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .input-group {
+            position: relative;
+            text-align: left;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 20px;
+            color: var(--input-icon-color);
+        }
+
+        .login-form input {
+            padding-left: 45px;
+            border: 2px solid var(--input-border);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .login-form input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 15px var(--primary-color);
+        }
+
+        .error-message {
+            background: var(--error-bg);
+            color: var(--error-text);
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 18px;
+            font-size: 15px;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+            animation: shake 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+            100% { transform: translateX(0); }
+        }
+
+        @keyframes gradientPulse {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            50% { transform: translateX(1%); }
+            75% { transform: translateX(-10%); }
+            100% { transform: translateX(0%); }
+        }
+
+        .grade-input-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .grade-input-wrapper input[type="number"] {
+            padding-left: 45px;
+            border: 2px solid var(--input-border);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-color);
+            width: 120px;
+            height: 45px;
+            font-size: 16px;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .grade-input-wrapper input[type="number"]:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 15px var(--primary-color), inset 0 0 10px rgba(0, 0, 0, 0.1);
+            transform: scale(1.03);
+            outline: none;
+        }
+
+        .grade-input-wrapper .grade-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 20px;
+            color: var(--input-icon-color);
+        }
+
+        .grade-input-wrapper input[type="number"]::-webkit-inner-spin-button,
+        .grade-input-wrapper input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .grade-input-wrapper input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+        .reason-input-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .reason-input-wrapper textarea {
+            padding: 12px 12px 12px 45px;
+            border: 2px solid var(--input-border);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-color);
+            width: 180px;
+            height: 50px;
+            font-size: 16px;
+            resize: none;
+            outline: none;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .reason-input-wrapper textarea:focus {
+            border-color: var(--error-text);
+            box-shadow: 0 0 15px var(--error-text), inset 0 0 10px rgba(0, 0, 0, 0.1);
+            transform: scale(1.03);
+        }
+
+        .reason-input-wrapper .reason-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 20px;
+            color: var(--error-text);
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            margin-bottom: 20px;
+        }
+
+        .checkbox-wrapper {
+            display: inline-flex;
+            align-items: center;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .checkbox-wrapper input[type="checkbox"] {
+            opacity: 0;
+            position: absolute;
+            width: 24px;
+            height: 24px;
+        }
+
+        .checkbox-wrapper label {
+            margin-left: 35px;
+            font-size: 17px;
+            color: var(--text-color);
+            cursor: pointer;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+        }
+
+        .checkbox-wrapper input[type="checkbox"] + label::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--input-border);
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .checkbox-wrapper input[type="checkbox"]:checked + label::before {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            box-shadow: 0 0 10px var(--primary-color);
+        }
+
+        .checkbox-wrapper input[type="checkbox"]:checked + label::after {
+            content: '✔';
+            position: absolute;
+            left: 6px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        }
+
+        .checkbox-wrapper input[type="checkbox"]:focus + label::before {
+            box-shadow: 0 0 15px var(--primary-color), inset 0 0 5px rgba(0, 0, 0, 0.2);
+        }
+
+        @media (max-width: 500px) {
+            .checkbox-group {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+
+        .notification {
+            display: none;
+            position: fixed;
+            top: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 25px;
+            border-radius: 10px;
+            color: white !important;
+            font-weight: bold;
+            opacity: 0;
+            transition: all 0.3s ease-in-out;
+            z-index: 1000;
+            min-width: 250px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            animation: pop 0.5s ease-out forwards;
+        }
+
+        .notification.show {
+            opacity: 1;
+        }
+
+        .notification.success {
+            background: linear-gradient(135deg, #2ecc71, #27ae60) !important;
+        }
+
+        .notification.error {
+            background: linear-gradient(135deg, #e74c3c, #c0392b) !important;
+        }
+
+        .notification-bell {
+            font-size: 28px;
+            cursor: pointer;
+            color: var(--header-text);
+            transition: all 0.3s ease;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        .notification-bell:hover {
+            transform: scale(1.2) rotate(15deg);
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.7);
+        }
+
+        .notification-bell.unread {
+            color: #e74c3c;
+            animation: blink 1s infinite;
+        }
+
+        .theme-toggle {
+            cursor: pointer;
+            font-size: 32px;
+            color: var(--header-text);
+            transition: all 0.3s ease;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.2) rotate(20deg);
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+        }
+
+        .theme-toggle.spin {
+            animation: spin 0.5s ease-in-out;
+        }
+
+        .request-details {
+            background: var(--form-bg);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: var(--form-shadow);
+            margin-top: 15px;
+        }
+
+        @media (max-width: 500px) {
+            .login-container {
+                padding: 25px;
+                margin: 15px;
+            }
+
+            .login-title {
+                font-size: 28px;
+            }
+
+            .btn-login {
+                font-size: 16px;
+                padding: 12px;
+            }
+
+            .dashboard-actions {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .dashboard-actions a {
+                width: 100%;
+                text-align: center;
+            }
+
+            .header-actions {
+                gap: 15px;
+            }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes pop {
+            0% { transform: scale(0.9) translateX(-50%); opacity: 0; }
+            100% { transform: scale(1) translateX(-50%); opacity: 1; }
+        }
+
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-squares-container"></div>
+
+    <header>
+        <h1>Stress - Student Management System</h1>
+        <div class="header-actions">
+            {% if user.is_authenticated %}
+                {% if user.role == 'student' %}
+                    <span class="notification-bell {% if has_unread_notifications %}unread{% endif %}"
+                          onclick="window.location.href='{% url 'notifications' %}'">
+                        🔔
+                    </span>
+                {% endif %}
+                <span class="theme-toggle" onclick="toggleTheme()">☀️</span>
+                <a href="{% url 'logout' %}">Logout</a>
+            {% endif %}
+        </div>
+    </header>
+
+    <div class="container">
+        {% if notification %}
+        <div id="notification" class="notification {{ notification_type }}">
+            {{ notification }}
+        </div>
+        {% endif %}
+
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <script>
+        // Генерация плавающих квадратов
+        function createFloatingSquare() {
+            const square = document.createElement('div');
+            square.classList.add('floating-square');
+
+            const startX = Math.random() * window.innerWidth;
+            const startY = Math.random() * window.innerHeight;
+            const endX = Math.random() * window.innerWidth;
+            const endY = Math.random() * window.innerHeight;
+
+            square.style.setProperty('--start-x', `${startX}px`);
+            square.style.setProperty('--start-y', `${startY}px`);
+            square.style.setProperty('--end-x', `${endX}px`);
+            square.style.setProperty('--end-y', `${endY}px`);
+
+            const duration = Math.random() * 10 + 5; // Длительность от 5 до 15 секунд
+            square.style.animationDuration = `${duration}s`;
+
+            document.querySelector('.floating-squares-container').appendChild(square);
+
+            square.addEventListener('animationend', () => {
+                square.remove();
+            });
+
+            return duration;
+        }
+
+        // Ограничение количества квадратиков
+        const maxSquares = 20; // Максимальное количество квадратиков
+        let squaresCreated = 0;
+        let longestDuration = 0;
+
+        function startCreatingSquares() {
+            if (squaresCreated < maxSquares) {
+                const duration = createFloatingSquare();
+                squaresCreated++;
+                longestDuration = Math.max(longestDuration, duration);
+
+                // Продолжаем создавать квадратики, пока не достигнем лимита
+                setTimeout(startCreatingSquares, 500); // Задержка между созданием квадратиков
+            }
+        }
+
+        // Запускаем создание квадратиков при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            startCreatingSquares();
+
+            const savedTheme = localStorage.getItem('theme') || 'day';
+            const themeToggle = document.querySelector('.theme-toggle');
+            if (savedTheme === 'night') {
+                document.body.classList.add('night');
+                themeToggle.textContent = '🌙';
+            } else if (savedTheme === 'star') {
+                document.body.classList.add('star');
+                themeToggle.textContent = '⭐';
+            } else if (savedTheme === 'victoria') {
+                document.body.classList.add('victoria');
+                themeToggle.textContent = '🌸';
+            } else {
+                document.body.classList.remove('night', 'star', 'victoria');
+                themeToggle.textContent = '☀️';
+            }
+
+            const notification = document.getElementById('notification');
+            if (notification) {
+                notification.style.display = 'block';
+                setTimeout(() => {
+                    notification.classList.add('show');
+                }, 10);
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                    setTimeout(() => {
+                        notification.style.display = 'none';
+                    }, 500);
+                }, 3000);
+            }
+
+            if ('{{ user.is_authenticated }}' === 'True') {
+                const sessionTheme = '{{ request.session.theme|default:"day" }}';
+                if (savedTheme !== sessionTheme) {
+                    fetch('/set-theme/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        body: 'theme=' + savedTheme
+                    });
+                }
+            }
+
+            document.querySelectorAll('a:not(.no-transition)').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const href = this.getAttribute('href');
+                    if (href && !href.startsWith('#') && !href.startsWith('http') && href !== 'javascript:void(0)') {
+                        const container = document.querySelector('.container');
+                        container.classList.add('page-exit');
+                        setTimeout(() => {
+                            window.location.href = href;
+                        }, 500);
+                    } else {
+                        window.location.href = href;
+                    }
+                });
+            });
+
+            document.querySelectorAll('form:not(.no-transition)').forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    if (!form.classList.contains('ajax-form')) {
+                        const container = document.querySelector('.container');
+                        container.classList.add('page-exit');
+                    }
+                });
+            });
+        });
+
+        function toggleTheme() {
+            const body = document.body;
+            const themeToggle = document.querySelector('.theme-toggle');
+            let currentTheme = body.classList.contains('victoria') ? 'victoria' :
+                             body.classList.contains('star') ? 'star' :
+                             body.classList.contains('night') ? 'night' : 'day';
+            let newTheme = 'day';
+            let newIcon = '☀️';
+
+            if (currentTheme === 'day') {
+                newTheme = 'night';
+                newIcon = '🌙';
+            } else if (currentTheme === 'night') {
+                newTheme = 'star';
+                newIcon = '⭐';
+            } else if (currentTheme === 'star') {
+                newTheme = 'victoria';
+                newIcon = '🌸';
+            } else if (currentTheme === 'victoria') {
+                newTheme = 'day';
+                newIcon = '☀️';
+            }
+
+            body.classList.remove('day', 'night', 'star', 'victoria');
+            if (newTheme !== 'day') {
+                body.classList.add(newTheme);
+            }
+
+            themeToggle.textContent = newIcon;
+            themeToggle.classList.remove('spin');
+            void themeToggle.offsetWidth;
+            themeToggle.classList.add('spin');
+
+            localStorage.setItem('theme', newTheme);
+
+            if ('{{ user.is_authenticated }}' === 'True') {
+                fetch('/set-theme/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: 'theme=' + newTheme
+                });
+            }
+
+            // При переключении темы очищаем существующие квадратики и перезапускаем генерацию
+            document.querySelectorAll('.floating-square').forEach(square => square.remove());
+            squaresCreated = 0;
+            longestDuration = 0;
+            startCreatingSquares();
+        }
+    </script>
+</body>
+</html>

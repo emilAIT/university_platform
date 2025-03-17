@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="section">
+    <div class="dashboard-header">
+        <h2>Подтверждение снятия преподавателя</h2>
+    </div>
+
+    <div class="section">
+        <p>Предмет: <strong>{{ subject.name }} ({{ subject.code }})</strong></p>
+        <p>Текущий преподаватель: <strong>{{ current_professor }}</strong></p>
+        <p class="error-message">
+            Внимание: Этот предмет зарегистрирован на преподавателя {{ current_professor }}.
+            Если вы снимете преподавателя, все оценки студентов по этому предмету будут удалены!
+        </p>
+
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="confirm" value="yes">
+            <div class="dashboard-actions">
+                <button type="submit" class="btn btn-primary" style="background-color: #f44336;">Подтвердить</button>
+                <a href="{% url 'admin_dashboard' %}" class="btn btn-primary">Отмена</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
