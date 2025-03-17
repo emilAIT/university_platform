@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>University Administration</title>
+   <link rel="stylesheet" href="static/admin.css">
+</head>
+<body>
+  <nav class="navbar">
+    <ul>
+      <li><a href="#students" class="active">Students</a></li>
+      <li><a href="#teachers">Teachers</a></li>
+      <li><a href="#subjects">Subjects</a></li>
+    </ul>
+  </nav>
+
+  <h1 style="text-align: center;">{{ university_name }} University Administration</h1>
+  <div class="container">
+    <div class="column left-column">
+      <div class="section student-section active">
+        <h2>Register New Student</h2>
+        <input type="text" id="studentName" placeholder="Student Name" required />
+        <input type="text" id="studentLogin" placeholder="Login" required />
+        <input type="password" id="studentPassword" placeholder="Password" required />
+        <button id="registerStudent" class="button">Register Student</button>
+      </div>
+
+      <div class="section teacher-section">
+        <h2>Register New Teacher</h2>
+        <input type="text" id="teacherName" placeholder="Teacher Name" required />
+        <input type="text" id="teacherLogin" placeholder="Login" required />
+        <input type="password" id="teacherPassword" placeholder="Password" required />
+        <button id="registerTeacher" class="button">Register Teacher</button>
+      </div>
+
+      <div class="section subject-section">
+        <h2>Manage Subjects</h2>
+        <input type="text" id="subjectName" placeholder="Subject Name" required />
+        <input type="number" id="quantity" placeholder="Quantity" required />
+        <select id="teacherAssign">
+          {% for teacher in teachers %}
+          <option value="{{ teacher[1] }}">{{ teacher[1] }}</option>
+          {% endfor %}
+        </select>
+        <button id="addSubject" class="button">Add Subject</button>
+      </div>
+    </div>
+
+    <div class="column right-column">
+      <div class="section student-section active">
+        <h2>Registered Students</h2>
+        <table id="studentTable">
+          <thead>
+            <tr>
+              <th>Student Name</th>
+              <th>Login</th>
+              <th>Password</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for student in students %}
+            <tr data-student-id="{{ student[0] }}" 
+                data-student-name="{{ student[1] }}" 
+                data-student-login="{{ student[2] }}" 
+                data-student-password="{{ student[3] }}">
+              <td>{{ student[1] }}</td>
+              <td>{{ student[2] }}</td>
+              <td>{{ student[3] }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <div class="del-button">
+          <button id="showStudentBtn" class="show-btn" disabled>Show</button>
+          <button id="deleteStudentBtn" class="delete-btn" disabled>Delete</button>
+        </div>
+      </div>
+
+      <div class="section teacher-section">
+        <h2>Registered Teachers</h2>
+        <table id="teacherTable">
+          <thead>
+            <tr>
+              <th>Teacher Name</th>
+              <th>Login</th>
+              <th>Password</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for teacher in teachers %}
+            <tr data-teacher-id="{{ teacher[0] }}" 
+                data-teacher-name="{{ teacher[1] }}" 
+                data-teacher-login="{{ teacher[2] }}" 
+                data-teacher-password="{{ teacher[3] }}">
+              <td>{{ teacher[1] }}</td>
+              <td>{{ teacher[2] }}</td>
+              <td>{{ teacher[3] }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <div class="del-button">
+          <button id="showTeacherBtn" class="show-btn" disabled>Show</button>
+          <button id="deleteTeacherBtn" class="delete-btn" disabled>Delete</button>
+        </div>
+      </div>
+
+      <div class="section subject-section">
+        <h2>Subjects</h2>
+        <table id="subjectTable">
+          <thead>
+            <tr>
+              <th>Subject Name</th>
+              <th>Quantity</th>
+              <th>Teacher</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for subject in teachers_with_subjects %}
+            <tr data-subject-id="{{ subject[0] }}" 
+                data-subject-name="{{ subject[1] }}" 
+                data-subject-teacher="{{ subject[2] }}">
+              <td>{{ subject[1] }}</td>
+              <td>{{ subject[2] }}</td>
+              <td>{{ subject[3] if subject[2] else "Not Assigned" }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <div class="del-button">
+          <button id="showSubjectBtn" class="show-btn" disabled>Show</button>
+          <button id="deleteSubjectBtn" class="delete-btn" disabled>Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Navigation Handling
+    const navLinks = document.querySelectorAll('.navbar a');
+    const sections = {
+      students: document.querySelectorAll('.student-section'),
+      teachers: document.querySelectorAll('.teacher-section'),
+      subjects: document.querySelectorAll('.subject-section')
+    };
+
+    // Set initial state
+    showSection('students');
+    fetchAllData(); // Load initial data
+
+    navLinks.forEach(link => {
+      link.addEventListener('click', function (e) {
+        e.preventDefault();
+        const section = this.getAttribute('href').substring(1);
+
+        // Update active link
+        navLinks.forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+
+        // Show selected section
+        showSection(section);
+      });
+    });
+
+    function showSection(section) {
+      Object.keys(sections).forEach(key => {
+        sections[key].forEach(sec => sec.classList.remove('active'));
+      });
+      sections[section].forEach(sec => sec.classList.add('active'));
+    }
+
+    // Fetch all data initially
+    function fetchAllData() {
+      fetchStudents();
+      fetchTeachers();
+      fetchSubjects();
+    }
+
+    function fetchStudents() {
+      fetch('/get_students')
+        .then(response => response.json())
+        .then(data => updateStudentTable(data.students))
+        .catch(error => console.error('Error fetching students:', error));
+    }
+
+    function fetchTeachers() {
+      fetch('/get_teachers')
+        .then(response => response.json())
+        .then(data => {
+          updateTeacherTable(data.teachers);
+          updateTeacherSelect(data.teachers);
+        })
+        .catch(error => console.error('Error fetching teachers:', error));
+    }
+
+    function fetchSubjects() {
+      fetch('/get_subjects_with_teachers')
+        .then(response => response.json())
+        .then(data => updateSubjectTable(data.subjects))
+        .catch(error => console.error('Error fetching subjects:', error));
+    }
+
+    function updateStudentTable(students) {
+      const tableBody = document.getElementById('studentTable').getElementsByTagName('tbody')[0];
+      tableBody.innerHTML = '';
+      students.forEach(student => {
+        const row = tableBody.insertRow();
+        row.setAttribute('data-student-id', student.student_id);
+        row.setAttribute('data-student-name', student.name);
+        row.setAttribute('data-student-login', student.login);
+        row.setAttribute('data-student-password', student.password);
+        row.innerHTML = `
+          <td>${student.name}</td>
+          <td>${student.login}</td>
+          <td>${student.password}</td>
+        `;
+      });
+    }
+
+    function updateTeacherTable(teachers) {
+      const tableBody = document.getElementById('teacherTable').getElementsByTagName('tbody')[0];
+      tableBody.innerHTML = '';
+      teachers.forEach(teacher => {
+        const row = tableBody.insertRow();
+        row.setAttribute('data-teacher-id', teacher.teacher_id);
+        row.setAttribute('data-teacher-name', teacher.name);
+        row.setAttribute('data-teacher-login', teacher.login);
+        row.setAttribute('data-teacher-password', teacher.password);
+        row.innerHTML = `
+          <td>${teacher.name}</td>
+          <td>${teacher.login}</td>
+          <td>${teacher.password}</td>
+        `;
+      });
+    }
+
+    function updateSubjectTable(subjects) {
+      const tableBody = document.getElementById('subjectTable').getElementsByTagName('tbody')[0];
+      tableBody.innerHTML = '';
+      subjects.forEach(subject => {
+        const row = tableBody.insertRow();
+        row.setAttribute('data-subject-id', subject.subject_id);
+        row.setAttribute('data-subject-name', subject.name);
+        row.setAttribute('data-subject-teacher', subject.teacher);
+        row.innerHTML = `
+          <td>${subject.name}</td>
+          <td>${subject.quantity}</td>
+          <td>${subject.teacher}</td>
+        `;
+      });
+    }
+
+    function updateTeacherSelect(teachers) {
+      const teacherSelect = document.getElementById('teacherAssign');
+      teacherSelect.innerHTML = '';
+      teachers.forEach(teacher => {
+        const option = document.createElement('option');
+        option.value = teacher.name;
+        option.textContent = teacher.name;
+        teacherSelect.appendChild(option);
+      });
+    }
+
+    let selectedStudentId = null;
+    let selectedTeacherId = null;
+    let selectedSubjectId = null;
+    let selectedRow = null;
+
+    // Student Table Selection
+    document.querySelector("#studentTable tbody").addEventListener("click", function(event) {
+      if (event.target.tagName === "TD") {
+        const row = event.target.closest("tr");
+        if (selectedRow) selectedRow.classList.remove("selected");
+        selectedRow = row;
+        selectedRow.classList.add("selected");
+        selectedStudentId = selectedRow.getAttribute("data-student-id");
+        document.getElementById("showStudentBtn").disabled = false;
+        document.getElementById("deleteStudentBtn").disabled = false;
+      }
+    });
+
+    document.getElementById("showStudentBtn").addEventListener("click", function () {
+      if (selectedRow) {
+        alert(`Student Details:\nName: ${selectedRow.getAttribute("data-student-name")}\nLogin: ${selectedRow.getAttribute("data-student-login")}\nPassword: ${selectedRow.getAttribute("data-student-password")}`);
+      }
+    });
+
+    document.getElementById("deleteStudentBtn").addEventListener("click", function () {
+      if (!selectedStudentId || !selectedRow) {
+        alert("Please select a student first.");
+        return;
+      }
+      if (confirm(`Are you sure you want to delete ${selectedRow.getAttribute("data-student-name")}?`)) {
+        fetch('/delete_student', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ student_id: selectedStudentId })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            updateStudentTable(data.students);
+            selectedStudentId = null;
+            selectedRow = null;
+            document.getElementById("showStudentBtn").disabled = true;
+            document.getElementById("deleteStudentBtn").disabled = true;
+            alert('Student deleted successfully!');
+          } else {
+            alert('Failed to delete student.');
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('An error occurred while deleting the student.');
+        });
+      }
+    });
+
+    // Teacher Table Selection
+    document.querySelector("#teacherTable tbody").addEventListener("click", function(event) {
+      if (event.target.tagName === "TD") {
+        const row = event.target.closest("tr");
+        if (selectedRow) selectedRow.classList.remove("selected");
+        selectedRow = row;
+        selectedRow.classList.add("selected");
+        selectedTeacherId = selectedRow.getAttribute("data-teacher-id");
+        document.getElementById("showTeacherBtn").disabled = false;
+        document.getElementById("deleteTeacherBtn").disabled = false;
+      }
+    });
+
+    document.getElementById("showTeacherBtn").addEventListener("click", function () {
+      if (selectedRow) {
+        alert(`Teacher Details:\nName: ${selectedRow.getAttribute("data-teacher-name")}\nLogin: ${selectedRow.getAttribute("data-teacher-login")}\nPassword: ${selectedRow.getAttribute("data-teacher-password")}`);
+      }
+    });
+
+    document.getElementById("deleteTeacherBtn").addEventListener("click", function () {
+      if (!selectedTeacherId || !selectedRow) {
+        alert("Please select a teacher first.");
+        return;
+      }
+      if (confirm(`Are you sure you want to delete ${selectedRow.getAttribute("data-teacher-name")}?`)) {
+        fetch('/delete_teacher', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ teacher_id: selectedTeacherId })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            updateTeacherTable(data.teachers);
+            updateTeacherSelect(data.teachers);
+            selectedTeacherId = null;
+            selectedRow = null;
+            document.getElementById("showTeacherBtn").disabled = true;
+            document.getElementById("deleteTeacherBtn").disabled = true;
+            alert('Teacher deleted successfully!');
+          } else {
+            alert('Failed to delete teacher.');
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('An error occurred while deleting the teacher.');
+        });
+      }
+    });
+
+    // Subject Table Selection
+    document.querySelector("#subjectTable tbody").addEventListener("click", function(event) {
+      if (event.target.tagName === "TD") {
+        const row = event.target.closest("tr");
+        if (selectedRow) selectedRow.classList.remove("selected");
+        selectedRow = row;
+        selectedRow.classList.add("selected");
+        selectedSubjectId = selectedRow.getAttribute("data-subject-id");
+        document.getElementById("showSubjectBtn").disabled = false;
+        document.getElementById("deleteSubjectBtn").disabled = false;
+      }
+    });
+
+    document.getElementById("showSubjectBtn").addEventListener("click", function () {
+      if (selectedRow) {
+        alert(`Subject Details:\nName: ${selectedRow.getAttribute("data-subject-name")}\nTeacher: ${selectedRow.getAttribute("data-subject-teacher") || 'Not Assigned'}`);
+      }
+    });
+
+    document.getElementById("deleteSubjectBtn").addEventListener("click", function () {
+      if (!selectedSubjectId || !selectedRow) {
+        alert("Please select a subject first.");
+        return;
+      }
+      if (confirm(`Are you sure you want to delete the subject ${selectedRow.getAttribute("data-subject-name")}?`)) {
+        fetch('/delete_subject', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ subject_id: selectedSubjectId })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            updateSubjectTable(data.subjects);
+            selectedSubjectId = null;
+            selectedRow = null;
+            document.getElementById("showSubjectBtn").disabled = true;
+            document.getElementById("deleteSubjectBtn").disabled = true;
+            alert('Subject deleted successfully!');
+          } else {
+            alert('Failed to delete subject.');
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('An error occurred while deleting the subject.');
+        });
+      }
+    });
+
+    // Add Student
+    document.getElementById('registerStudent').addEventListener('click', function() {
+      const studentName = document.getElementById('studentName').value;
+      const studentLogin = document.getElementById('studentLogin').value;
+      const studentPassword = document.getElementById('studentPassword').value;
+      if (!studentName || !studentLogin || !studentPassword) {
+        alert("Please fill in all fields.");
+        return;
+      }
+      fetch('/add_student', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: studentName,
+          login: studentLogin,
+          password: studentPassword
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          updateStudentTable(data.students);
+          document.getElementById('studentName').value = '';
+          document.getElementById('studentLogin').value = '';
+          document.getElementById('studentPassword').value = '';
+          alert(data.message);
+        } else {
+          alert(data.message);
+        }
+      })
+      .catch(error => console.error('Error:', error));
+    });
+
+    // Add Teacher
+    document.getElementById('registerTeacher').addEventListener('click', function() {
+      const teacherName = document.getElementById('teacherName').value;
+      const teacherLogin = document.getElementById('teacherLogin').value;
+      const teacherPassword = document.getElementById('teacherPassword').value;
+      if (!teacherName || !teacherLogin || !teacherPassword) {
+        alert("Please fill in all fields.");
+        return;
+      }
+      fetch('/add_teacher', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: teacherName,
+          login: teacherLogin,
+          password: teacherPassword
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          updateTeacherTable(data.teachers);
+          updateTeacherSelect(data.teachers);
+          document.getElementById('teacherName').value = '';
+          document.getElementById('teacherLogin').value = '';
+          document.getElementById('teacherPassword').value = '';
+          alert(data.message);
+        } else {
+          alert(data.message);
+        }
+      })
+      .catch(error => console.error('Error:', error));
+    });
+
+    // Add Subject
+    document.getElementById('addSubject').addEventListener('click', function() {
+      const subjectName = document.getElementById('subjectName').value;
+      const teacherName = document.getElementById('teacherAssign').value;
+      const quantity = document.getElementById('quantity').value;
+      if (!subjectName || !teacherName || !quantity) {
+        alert("Please fill in all fields.");
+        return;
+      }
+      fetch('/add_subject', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          subject: subjectName,
+          teacher: teacherName,
+          university_id: "{{ university_id }}",
+          quantity: quantity
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          updateSubjectTable(data.subjects);
+          document.getElementById('subjectName').value = '';
+          document.getElementById('quantity').value = '';
+          alert(data.message);
+        } else {
+          alert(data.message);
+        }
+      })
+      .catch(error => console.error('Error:', error));
+    });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teacher Grade Management</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='teacher.css') }}">
+</head>
+<body>
+  <div class="container">
+    <h2>Teacher Grade Management</h2>
+    <div class="subject-info">
+      <div>
+        <strong>Teacher:</strong> {{ username }}
+      </div>
+      <div>
+        <label for="subjectSelect"><strong>Select Subject:</strong></label>
+        <select id="subjectSelect">
+          <option value="">-- Select Subject --</option>
+          {% for subject in subjects %}
+            <option value="{{ subject[0] }}">{{ subject[1] }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <h3>Student Grades</h3>
+    <table class="subject-table" id="studentTable">
+      <thead>
+        <tr>
+          <th>Student Name</th>
+          <th>Current Grade</th>
+          <th>Update Grade</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Rows will be populated dynamically based on selected subject -->
+      </tbody>
+    </table>
+
+    <button id="saveGradesBtn">Save Grades</button>
+  </div>
+
+  <script>
+    // When subject is selected, fetch student grades for that subject
+    document.getElementById('subjectSelect').addEventListener('change', function() {
+      const subjectId = this.value;
+      if (subjectId) {
+        fetch(`/get_student_grades?subject_id=${subjectId}`)
+          .then(response => response.json())
+          .then(data => {
+            populateTable(data.student_grades, subjectId);
+          })
+          .catch(error => console.error('Error fetching student grades:', error));
+      } else {
+        document.getElementById('studentTable').getElementsByTagName('tbody')[0].innerHTML = '';
+      }
+    });
+
+    // Populate table with student grades
+    function populateTable(studentGrades, subjectId) {
+      const tbody = document.getElementById('studentTable').getElementsByTagName('tbody')[0];
+      tbody.innerHTML = '';
+      studentGrades.forEach((record, index) => {
+        // record: [student_id, name, username, grade, date_assigned]
+        const row = tbody.insertRow();
+        
+        const cell1 = row.insertCell(0);
+        cell1.textContent = record[1]; // student name
+        
+        const cell2 = row.insertCell(1);
+        cell2.textContent = record[3]; // current grade
+        
+        const cell3 = row.insertCell(2);
+        const gradeInput = document.createElement('input');
+        gradeInput.type = 'text';
+        gradeInput.value = record[3];
+        gradeInput.setAttribute('data-student-id', record[0]);
+        gradeInput.setAttribute('data-subject-id', subjectId);
+        cell3.appendChild(gradeInput);
+      });
+    }
+
+    // Save updated grades
+    document.getElementById('saveGradesBtn').addEventListener('click', function() {
+      const inputs = document.querySelectorAll('#studentTable input[type="text"]');
+      const updates = [];
+      inputs.forEach(input => {
+        updates.push({
+          student_id: input.getAttribute('data-student-id'),
+          subject_id: input.getAttribute('data-subject-id'),
+          grade: input.value
+        });
+      });
+      
+      fetch('/update_student_grade', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ updates: updates })
+      })
+      .then(response => response.json())
+      .then(data => {
+        alert(data.message);
+        // Optionally, re-fetch the updated student grades:
+        const subjectId = document.getElementById('subjectSelect').value;
+        if (subjectId) {
+          fetch(`/get_student_grades?subject_id=${subjectId}`)
+            .then(response => response.json())
+            .then(data => populateTable(data.student_grades, subjectId))
+            .catch(error => console.error('Error refreshing grades:', error));
+        }
+      })
+      .catch(error => console.error('Error updating grades:', error));
+    });
+  </script>
+</body>
+</html>

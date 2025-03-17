@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Subjects and Grades</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='student.css') }}">
+</head>
+<body>
+  <div class="container">
+    <!-- Left Section: Display Student Name, Subjects and Grades -->
+    <div class="left-section">
+      <div class="student-name">Student: {{ student[1] }}</div>
+      <h2>Subjects and Grades</h2>
+      <table id="subjectTable">
+        <thead>
+          <tr>
+            <th>Subject</th>
+            <th>Grade</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for record in subjects_grade %}
+          <tr>
+            <td>{{ record[1] }}</td>
+            <td>{{ record[2] if record[2] != "Not Graded" else "Not Graded" }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Right Section: Add Subject -->
+    <div class="right-section">
+      <h2>Add Subject</h2>
+      <label for="subjectSelect">Choose a subject:</label>
+      <select id="subjectSelect" class="subject-select">
+        {% for subject in subjects %}
+          <option value="{{ subject[1] }}">{{ subject[1] }}</option>
+        {% endfor %}
+      </select>
+      <button id="addSubjectBtn" class="button">Add Subject</button>
+      <p></p>
+       <button id="graduateBtn" class="button">Graduate</button>
+      <p>
+      </p>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('graduateBtn').addEventListener('click', function() {
+      fetch('/graduate')
+        .then(response => response.json())
+        .then(data => {
+          alert(data.message);
+        })
+        .catch(error => console.error('Error:', error));
+    });
+
+
+    document.getElementById('addSubjectBtn').addEventListener('click', function () {
+      const subjectSelect = document.getElementById('subjectSelect');
+      const selectedSubject = subjectSelect.value;
+
+      // Send the enrollment request to the backend
+      fetch('/enroll_subject', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          subject: selectedSubject
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        alert(data.message);
+        // Refresh the page to update the subjects and grades table
+        location.reload();
+      })
+      .catch(error => console.error('Error:', error));
+    });
+  </script>
+</body>
+</html>
