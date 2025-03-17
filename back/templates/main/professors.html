@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professors</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            background-color: #f8f9fa;
+        }
+        .top-panel {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #ffffff;
+            border-bottom: 1px solid #dee2e6;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .top-panel .left {
+            font-size: 20px;
+            font-weight: bold;
+            color: #343a40;
+        }
+        .table-container {
+            flex: 1;
+            padding: 20px;
+            background-color: #ffffff;
+            margin: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            overflow: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table th, table td {
+            padding: 12px;
+            border: 1px solid #dee2e6;
+            text-align: left;
+        }
+        table th {
+            background-color: #007bff;
+            color: white;
+        }
+        table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        table tr:hover {
+            background-color: #e9ecef;
+            cursor: pointer;
+        }
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px;
+        }
+        .buttons button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        .buttons button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+    <script>
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        function toggleCourseStatus(courseId) {
+            const csrftoken = getCookie('csrftoken');
+            fetch(`/toggle_course_status/${courseId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    const button = document.getElementById(`toggleStatus_${courseId}`);
+                    button.textContent = data.is_mandatory ? 'Mandatory' : 'Optional';
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+    <!-- Top Panel -->
+    <div class="top-panel">
+        <div class="left">{{ university.name }}</div>
+    </div>
+
+    <!-- Table Container -->
+    <div class="table-container">
+        <table id="professorTable">
+            <thead>
+                <tr>
+                    <th>Professor</th>
+                    <th>Courses</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for professor in professors %}
+                    <tr>
+                        <td>{{ professor.user.username }}</td>
+                        <td>
+                            <ul>
+                                {% for course in professor.course_set.all %}
+                                    {% if course.university == university %}
+                                        <li>
+                                            {{ course.name }}
+                                            <button onclick="window.location.href='{% url 'delete_course' course.id %}'" id="deleteCourse">Delete Course</button>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                        </td>
+                        <td>
+                            <button onclick="window.location.href='{% url 'delete_professor' professor.id %}'" id="deleteProfessor">Delete Professor</button>
+                            <button onclick="window.location.href='{% url 'edit_professor' professor.id %}'" id="editProfessor">Edit Professor</button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <h3>Courses</h3>
+        <table id="courseTable">
+            <thead>
+                <tr>
+                    <th>Course</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for course in university.course_set.all %}
+                    <tr>
+                        <td>{{ course.name }}</td>
+                        <td>
+                            <button id="toggleStatus_{{ course.id }}" onclick="toggleCourseStatus({{ course.id }})">
+                                {{ course.is_mandatory|yesno:"Mandatory,Optional" }}
+                            </button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="buttons">
+        <button onclick="window.location.href='{% url 'university_admin' university.id %}'" id="universityAdmin">University Admin</button>
+    </div>
+</body>
+</html>

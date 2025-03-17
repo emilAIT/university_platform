@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University Admin</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f8f9fa;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 80%;
+        }
+        h2 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #343a40;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table, th, td {
+            border: 1px solid #dee2e6;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #e9ecef;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-bottom: 10px;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>University Admin</h2>
+        {% if user.is_superuser %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>University</th>
+                        <th>Admin</th>
+                        <th>Students</th>
+                        <th>Professors</th>
+                        <th>Courses</th>
+                        <th>Graduates</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for data in university_data %}
+                    <tr>
+                        <td>{{ data.university.name }}</td>
+                        <td>{{ data.university.admin.username }}</td>
+                        <td>{{ data.student_count }}</td>
+                        <td>{{ data.professor_count }}</td>
+                        <td>{{ data.course_count }}</td>
+                        <td>{{ data.graduate_count }}</td>
+                        <td>
+                            <form method="POST" action="{% url 'delete_university' data.university.id %}">
+                                {% csrf_token %}
+                                <button type="submit">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <button onclick="window.location.href='{% url 'create_university' %}'">Create University</button>
+            <button onclick="window.location.href='{% url 'login' %}'">Logout</button>
+        {% elif university %}
+            <div class="info">
+                <p><strong>University:</strong> {{ university.name }}</p>
+                <p><strong>Admin:</strong> {{ university.admin.username }}</p>
+            </div>
+            <div class="buttons">
+                <button onclick="window.location.href='{% url 'students' %}'">Manage Students</button>
+                <button onclick="window.location.href='{% url 'professors' %}'">Manage Professors</button>
+                <button onclick="window.location.href='{% url 'course_overview' %}'">Manage Courses</button>
+                <button onclick="window.location.href='{% url 'create_professor' %}'">Add Professor</button>
+                <button onclick="window.location.href='{% url 'create' %}'">Add Student</button>
+                <button onclick="window.location.href='{% url 'create_course' %}'">Add Course</button>
+                <button onclick="window.location.href='{% url 'notifications' %}'">Notifications</button>
+                <button onclick="window.location.href='{% url 'login' %}'">Logout</button>
+            </div>
+        {% else %}
+            <div class="info">
+                <p>No university selected.</p>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
