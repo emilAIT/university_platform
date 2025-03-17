@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>{{ course.name }} - Manage Student Grades</h1>
+    <form method="post">
+        {% csrf_token %}
+        <ul>
+            {% for enrollment in enrollments %}
+                <li>
+                    <strong>{{ enrollment.student.username }}</strong> - 
+                    <input type="text" name="grade_{{ enrollment.id }}" value="{{ enrollment.grade|default_if_none:'' }}">
+                </li>
+            {% endfor %}
+        </ul>
+        <button type="submit">Save Grades</button>
+    </form>
+{% endblock %}

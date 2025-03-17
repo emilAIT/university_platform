@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Welcome, {{ user.username }}!</h1>
+    <h2>Your Courses</h2>
+
+    {% if courses %}
+        <ul>
+            {% for course in courses %}
+                <li>
+                    <strong>{{ course.name }}</strong><br>
+                    <span>Course Description: {{ course.description }}</span><br>
+                    <a href="{% url 'student_course_detail' course.id %}">View Details</a>
+                </li>
+            {% endfor %}
+        </ul>
+
+        <!-- Graduation Request Status -->
+        {% if user.graduation_status == 'pending' %}
+            <p>Your graduation request is pending approval.</p>
+        {% elif user.graduation_status == 'approved' %}
+            <p>🎓 Congratulations! You have graduated.</p>
+        {% elif user.graduation_status == 'rejected' %}
+            <p>Your graduation request was rejected.</p>
+        {% endif %}
+
+        <!-- Request Graduation Form -->
+        {% if user.graduation_status == 'pending' %}
+            <form method="post" action="{% url 'users:request_graduation' %}">
+                {% csrf_token %}
+                <button type="submit">Request Graduation</button>
+            </form>
+        {% endif %}
+    {% else %}
+        <p>You are not enrolled in any courses yet.</p>
+    {% endif %}
+{% endblock %}
+
+
+{% comment %} {% extends 'base.html' %}
+
+{% block content %}
+    <h1>Welcome, {{ user.username }}!</h1>
+    <h2>Your Courses</h2>
+
+    {% if courses %}
+        <ul>
+            {% for course in courses %}
+                <li>
+                    <strong>{{ course.name }}</strong><br>
+                    <span>Course Description: {{ course.description }}</span><br>
+                    <a href="{% url 'student_course_detail' course.id %}">View Details</a> <!-- Link to course detail page -->
+                </li>
+            {% endfor %}
+        </ul>
+
+        <!-- Graduation Request Button -->
+        <form method="post" action="{% url 'users:request_graduation' %}">
+            {% csrf_token %}
+            <button type="submit">Request Graduation</button>
+        </form>
+
+        {% if graduation_status == "pending" %}
+            <p>Your graduation request is pending approval.</p>
+        {% elif graduation_status == "approved" %}
+            <p>🎓 Congratulations! You have graduated.</p>
+        {% else %}
+            <p>You are not eligible for graduation yet.</p>
+        {% endif %}
+    {% else %}
+        <p>You are not enrolled in any courses yet.</p>
+    {% endif %}
+{% endblock %}
+ {% endcomment %}
+
+
+{% comment %} <!-- students/student_dashboard.html -->
+
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Welcome, {{ user.username }}!</h1>
+    <h2>Your Courses</h2>
+
+    {% if courses %}
+        <ul>
+            {% for course in courses %}
+                <li>
+                    <strong>{{ course.name }}</strong><br>
+                    <span>Course Description: {{ course.description }}</span><br>
+                    <a href="{% url 'student_course_detail' course.id %}">View Details</a> <!-- Link to course detail page -->
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>You are not enrolled in any courses yet.</p>
+    {% endif %}
+{% endblock %} {% endcomment %}

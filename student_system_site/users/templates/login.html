@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/reg_styles.css' %}">
+</head>
+<body>
+    <div class="login-box">
+        <div class="login-header">
+            <header>Login</header>
+        </div>
+        <form method="POST">
+            {% csrf_token %}
+            <div class="input-box">
+                <input type="text" class="input-field" name="username" placeholder="Email" autocomplete="off" required>
+            </div>
+            <div class="input-box">
+                <input type="password" class="input-field" name="password" placeholder="Password" autocomplete="off" required>
+            </div>
+            <div class="input-submit">
+                <button class="submit-btn" id="submit"></button>
+                <label for="submit">Sign In</label>
+            </div>
+        
+            <!-- Hidden role input field -->
+            <input type="hidden" name="role" id="role" value="teacher"> <!-- Default is 'teacher' -->
+        
+            <!-- Role selection toggle -->
+            <div class="sign-up-link">
+                <p id="role-toggle" data-role="teacher">I am a <span id="role-text">Teacher</span></p>
+            </div>
+        </form>        
+    </div>
+
+    <script>
+        // Wait for the document to be ready
+        document.addEventListener('DOMContentLoaded', function() {
+            const roleText = document.getElementById('role-text');  // The role label (Teacher/Student)
+            const roleToggle = document.getElementById('role-toggle');  // The clickable area
+            const roleInput = document.getElementById('role');  // The hidden input field for role
+            
+            roleToggle.addEventListener('click', function() {
+                // Check current role and toggle it
+                if (roleText.textContent === 'Teacher') {
+                    roleText.textContent = 'Student';  // Change the text
+                    roleToggle.setAttribute('data-role', 'student');  // Update the role
+                    roleInput.value = 'student';  // Set value to 'student'
+                } else {
+                    roleText.textContent = 'Teacher';  // Change the text
+                    roleToggle.setAttribute('data-role', 'teacher');  // Update the role
+                    roleInput.value = 'teacher';  // Set value to 'teacher'
+                }
+            });
+        });
+    </script>
+
+    
+</body>
+</html>
+
+

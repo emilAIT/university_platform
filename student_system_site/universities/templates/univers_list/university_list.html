@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="university-list">
+        <h1>Universities</h1>
+        <ul class="universities">
+            {% for university in universities %}
+                <li class="university-item">
+                    <!-- Link to the login page with university ID as a query parameter -->
+                    <a href="{% url 'users:login' %}?university_id={{ university.id }}">
+                        <h2>{{ university.name }}</h2>
+                        <img src="{{ university.image.url }}" alt="{{ university.name }}" class="university-image">
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}
+
