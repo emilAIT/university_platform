@@ -1,0 +1,35 @@
+<!-- templates/base.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}  
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student System</title>
+
+    <!-- Include common stylesheets -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+
+    <!-- Main Content Area -->
+    <div class="content">
+        {% block content %}
+        <!-- Page-specific content will go here -->
+        {% endblock %}
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 Student System</p>
+    </footer>
+
+    <script src="{% static 'js/global.js' %}" defer></script>
+
+
+    <!-- Include common scripts here -->
+    {% comment %} <script src="{% static 'js/script.js' %}"></script> {% endcomment %}
+</body>
+</html>
+

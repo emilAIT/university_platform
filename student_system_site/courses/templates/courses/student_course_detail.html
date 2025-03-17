@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>{{ course.name }} - Grades</h1>
+
+    <h2>Grades</h2>
+    {% if enrollments %}
+        <ul>
+            {% for enrollment in enrollments %}
+                <li>
+                    <strong>{{ enrollment.grade|default:"Not Graded" }}</strong><br>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No students are enrolled in this course yet.</p>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Add Grade for a Student in {{ course.name }}</h1>
+
+    <form method="POST">
+        {% csrf_token %}
+        <label for="student_name">Student Name:</label>
+        <input type="text" name="student_name" id="student_name" placeholder="Enter student name" required>
+
+        <label for="grade">Grade:</label>
+        <input type="number" name="grade" id="grade" placeholder="Enter grade" step="0.1" required>
+
+        <button type="submit">Add Grade</button>
+    </form>
+{% endblock %}
+
+
+{% comment %} {% extends 'base.html' %}
+
+{% block content %}
+    <h1>Add Grades for {{ course.name }}</h1>
+
+    <form method="POST">
+        {% csrf_token %}
+        <table>
+            <tr>
+                <th>Student Name</th>
+                <th>Grade</th>
+            </tr>
+            {% for enrollment in students_without_grades %}
+                <tr>
+                    <td>{{ enrollment.student.username }}</td>
+                    <td>
+                        <input type="number" step="0.1" name="grade_{{ enrollment.id }}" placeholder="Enter grade">
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+
+        <button type="submit">Save Grades</button>
+    </form>
+{% endblock %} {% endcomment %}

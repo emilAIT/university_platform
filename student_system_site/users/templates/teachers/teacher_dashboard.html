@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Welcome, {{ user.username }}!</h1>
+    <h2>Your Courses</h2>
+
+    {% if courses %}
+        <ul>
+            {% for course in courses %}
+                <li>
+                    <strong>{{ course.name }}</strong><br>
+                    <span>Course Description: {{ course.description }}</span><br>
+                    <a href="{% url 'course_detail' course.id %}">View Details</a> <!-- Link to course detail page -->
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>You are not teaching any courses yet.</p>
+    {% endif %}
+{% endblock %}
