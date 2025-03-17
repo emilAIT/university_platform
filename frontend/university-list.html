@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University List</title>
+    <link rel="stylesheet" href="university.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>University Management System</h1>
+        </header>
+        
+        <nav>
+            <ul>
+                <li><a href="university.html">Home</a></li>
+                <li><a href="#" class="active">List of Universities</a></li>
+                <!-- Other menu items can be added here -->
+            </ul>
+        </nav>
+        
+        <main>
+            <div class="page-content">
+                <div class="page-header">
+                    <h2>Universities</h2>
+                </div>
+                <div class="page-body">
+                    <div class="search-container">
+                        <input type="text" id="university-search" placeholder="Search universities...">
+                    </div>
+                    <div class="add-container">
+                        <button id="add-university-btn">Add New University</button>
+                    </div>
+                    <div class="university-list">
+                        <!-- Universities will be displayed here -->
+                        <ul id="universities"></ul>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="universite.js"></script>
+</body>
+</html>

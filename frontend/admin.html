@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrator Management</title>
+    <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="admins.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        
+        .admin-header {
+            background-color: #3498db;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .admin-container {
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .admin-tools {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+        
+        .admin-search {
+            flex: 1;
+            margin-right: 20px;
+        }
+        
+        .back-button {
+            margin-top: 20px;
+            padding: 10px 15px;
+            background-color: #95a5a6;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .back-button:hover {
+            background-color: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-header">
+        <h1>Administrator Management</h1>
+    </div>
+    
+    <div class="admin-container">
+        <div class="admin-tools">
+            <div class="admin-search">
+                <input type="text" id="admin-search" placeholder="Search administrators by name, role or email...">
+            </div>
+            <div>
+                <button id="add-admin-btn">Add New Administrator</button>
+            </div>
+        </div>
+        
+        <div class="admin-list-container">
+            <h2>Administrators List</h2>
+            <ul id="administrators">
+                <!-- Administrators will be loaded here by JavaScript -->
+            </ul>
+        </div>
+        
+        <a href="main.html" class="back-button">Back to Home</a>
+    </div>
+    
+    <!-- Add Admin Modal -->
+    <div id="add-admin-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add New Administrator</h2>
+                <span class="close" id="close-add-admin">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="admin-form">
+                    <div class="form-group">
+                        <label for="admin-name">Name:</label>
+                        <input type="text" id="admin-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="admin-login">Login Username:</label>
+                        <input type="text" id="admin-login" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="admin-password">Password:</label>
+                        <input type="password" id="admin-password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="admin-role">Role:</label>
+                        <select id="admin-role" required>
+                            <option value="">Select a role</option>
+                            <option value="admin">Admin</option>
+                            <option value="teacher">Teacher</option>
+                            <option value="student">Student</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="admin-university">University:</label>
+                        <select id="admin-university" required>
+                            <option value="">Select a university</option>
+                            <!-- Universities will be populated dynamically -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="admin-email">Email:</label>
+                        <input type="email" id="admin-email" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit">Save Administrator</button>
+                        <button type="button" class="cancel-btn">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Edit Admin Modal -->
+    <div id="edit-admin-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Administrator</h2>
+                <span class="close" id="close-edit-admin">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="edit-admin-form">
+                    <input type="hidden" id="edit-admin-id">
+                    <div class="form-group">
+                        <label for="edit-admin-name">Name:</label>
+                        <input type="text" id="edit-admin-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-admin-login">Login Username:</label>
+                        <input type="text" id="edit-admin-login" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-admin-password">Password:</label>
+                        <input type="password" id="edit-admin-password" placeholder="Leave blank to keep current password">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-admin-role">Role:</label>
+                        <select id="edit-admin-role" required>
+                            <option value="">Select a role</option>
+                            <option value="admin">Admin</option>
+                            <option value="teacher">Teacher</option>
+                            <option value="student">Student</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-admin-email">Email:</label>
+                        <input type="email" id="edit-admin-email" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit">Update Administrator</button>
+                        <button type="button" class="cancel-btn">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script src="admins.js"></script>
+</body>
+</html>

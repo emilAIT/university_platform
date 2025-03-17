@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Management</title>
+    <link rel="stylesheet" href="university.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .course-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .course-card {
+            background-color: #fff;
+            border: 1px solid #e0e7ff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            position: relative;
+            transition: all 0.3s;
+        }
+        
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .course-card.mandatory {
+            border-left: 4px solid #1a5fa5;
+        }
+        
+        .course-card.optional {
+            border-left: 4px solid #f39c12;
+        }
+        
+        .course-type {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 12px;
+            padding: 3px 8px;
+            border-radius: 20px;
+            color: white;
+        }
+        
+        .course-type.mandatory {
+            background-color: #1a5fa5;
+        }
+        
+        .course-type.optional {
+            background-color: #f39c12;
+        }
+        
+        .course-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .course-info {
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .course-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .btn-delete {
+            background-color: #e74c3c;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-delete:hover {
+            background-color: #c0392b;
+        }
+    </style>
+</head>
+<body>
+    <div class="university-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <h2><i class="fas fa-university"></i> UniManager</h2>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="university.html"><i class="fas fa-list"></i> Universities</a></li>
+                <li><a href="main.html"><i class="fas fa-home"></i> Home</a></li>
+                <li class="active"><a href="courses.html"><i class="fas fa-book"></i> Courses</a></li>
+                <li><a href="students.html"><i class="fas fa-user-graduate"></i> Students</a></li>
+                <li><a href="reports.html"><i class="fas fa-chart-bar"></i> Reports</a></li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <header>
+                <div class="header-title">
+                    <h1>Course Management</h1>
+                </div>
+                <div class="user-info">
+                    <button id="header-logout-btn" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                    <span>Admin User</span>
+                    <img src="https://via.placeholder.com/40" alt="User Avatar" class="avatar">
+                </div>
+            </header>
+
+            <!-- Course Content -->
+            <div class="content-area">
+                <div class="card university-panel">
+                    <div class="card-header">
+                        <h2>Courses</h2>
+                        <div class="actions">
+                            <button id="add-course-btn" class="btn btn-primary">
+                                <i class="fas fa-plus"></i> Add Course
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="search-container">
+                            <input type="text" id="course-search" placeholder="Search courses...">
+                            <i class="fas fa-search search-icon"></i>
+                        </div>
+                        
+                        <div class="course-grid-container">
+                            <div id="course-grid" class="course-grid">
+                                <!-- Courses will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="courses.js"></script>
+</body>
+</html>

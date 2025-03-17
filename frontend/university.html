@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University Management</title>
+    <link rel="stylesheet" href="university.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="university-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <h2><i class="fas fa-university"></i> UniManager</h2>
+            </div>
+            <ul class="nav-menu">
+                <li class="active"><a href="#"><i class="fas fa-list"></i> Universities</a></li>
+                <li><a href="main.html"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="courses.html"><i class="fas fa-book"></i> Courses</a></li>
+                <li><a href="students.html"><i class="fas fa-user-graduate"></i> Students</a></li>
+                <li><a href="reports.html"><i class="fas fa-chart-bar"></i> Reports</a></li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <header>
+                <div class="header-title">
+                    <h1>University Management</h1>
+                </div>
+                <div class="user-info">
+                    <button id="header-logout-btn" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                    <span>Admin User</span>
+                    <img src="https://via.placeholder.com/40" alt="User Avatar" class="avatar">
+                </div>
+            </header>
+
+            <!-- University Content -->
+            <div class="content-area">
+                <div class="card university-panel">
+                    <div class="card-header">
+                        <h2>Universities</h2>
+                        <div class="actions">
+                            <button id="add-university-btn" class="btn btn-primary">
+                                <i class="fas fa-plus"></i> Add University
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="search-container">
+                            <input type="text" id="university-search" placeholder="Search universities...">
+                            <i class="fas fa-search search-icon"></i>
+                        </div>
+                        
+                        <div class="university-list-container">
+                            <ul id="universities" class="university-items">
+                                <!-- Universities will be populated by JavaScript -->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add University Modal Dialog -->
+    <div id="university-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-plus-circle"></i> Add New University</h3>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="university-form">
+                    <div class="form-group">
+                        <label for="university-name">University Name</label>
+                        <input type="text" id="university-name" class="form-input" placeholder="Enter university name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="foundation-year">Year of Foundation</label>
+                        <input type="number" id="foundation-year" class="form-input" placeholder="Enter foundation year" min="1000" max="2099" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="university-location">Location</label>
+                        <input type="text" id="university-location" class="form-input" placeholder="Enter city, country" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="student-count">Number of Students</label>
+                        <input type="number" id="student-count" class="form-input" placeholder="Enter number of students" min="0" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="university-website">Website</label>
+                        <input type="url" id="university-website" class="form-input" 
+                               placeholder="Enter website URL (e.g., https://www.university.edu)" 
+                               pattern="https?://.+"
+                               title="Include http:// or https:// in the URL">
+                        <small class="form-hint">Include http:// or https:// at the beginning</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="university-description">Description</label>
+                        <textarea id="university-description" class="form-input" placeholder="Brief description of the university" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" id="cancel-university" class="btn btn-secondary">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save University</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="universite.js"></script>
+</body>
+</html>

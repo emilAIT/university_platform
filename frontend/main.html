@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Educational Platform</title>
+    <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="admins.css">
+</head>
+<body>
+    <div class="container">
+        <div class="left-panel">
+            <section class="section universities">
+                <h2>Universities</h2>
+                <ul>
+                    <li id="university-list-link">List of universities</li>
+                </ul>
+            </section>
+
+        
+
+
+            <section class="section reports">
+                <h2>Reports</h2>
+                <ul>
+                    <li id="academic-report-link"> Academic Report</li>
+                   
+                </ul>
+            </section>
+
+            <section class="section admins">
+                <h2>Administrators</h2>
+                <ul>
+                    <li id="admin-list-link">list of admins</li>
+                   
+                </ul>
+            </section>
+        </div>
+
+        <div class="right-panel">
+            <div class="info-box">
+                <h2>About This Platform</h2>
+                <p>This site was created for convenient interaction between students, teachers and the Ministry of Education, uniting them on one platform. It allows you to easily manage the educational process, access educational resources and automate administration.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- University window modal -->
+    <div id="university-window" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Universities</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="search-container">
+                    <input type="text" id="university-search" placeholder="Search universities...">
+                </div>
+                <div class="add-container">
+                    <button id="add-university-btn">Add New University</button>
+                </div>
+                <div class="university-list">
+                    <!-- Universities will be displayed here -->
+                    <ul id="universities"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reports window modal -->
+    <div id="reports-window" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>University Reports</h2>
+                <span class="close" id="close-reports">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="search-container">
+                    <input type="text" id="report-search" placeholder="Search universities...">
+                </div>
+                <div class="reports-list">
+                    <h3>Select University to View Student Data</h3>
+                    <ul id="reports-list">
+                        <!-- University names will be displayed here -->
+                        <li class="report-item" data-university-id="1">University of Technology</li>
+                        <li class="report-item" data-university-id="2">National University</li>
+                        <li class="report-item" data-university-id="3">City College</li>
+                        <li class="report-item" data-university-id="4">State University</li>
+                        <li class="report-item" data-university-id="5">International Institute</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Report View Modal -->
+    <div id="report-view-modal" class="modal">
+        <div class="modal-content report-view-content">
+            <div class="modal-header report-header">
+                <h2 id="report-title">University Name</h2>
+                <span class="close" id="close-report-view">&times;</span>
+            </div>
+            <div class="modal-body report-body">
+                <div class="report-info">
+                    <p><strong>Student Records</strong></p>
+                    <p><strong>Date:</strong> <span id="report-date">January 1, 2023</span></p>
+                </div>
+                <div class="student-table-container">
+                    <table id="student-data-table" class="student-table">
+                        <thead>
+                            <tr>
+                                <th>Student Name</th>
+                                <th>Student ID</th>
+                                <th>Course</th>
+                                <th>Grade</th>
+                            </tr>
+                        </thead>
+                        <tbody id="student-data-body">
+                            <!-- Student data will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Administrator window modal -->
+    <div id="admin-window" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Administrators</h2>
+                <span class="close" id="close-admin">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="search-container">
+                    <input type="text" id="admin-search" placeholder="Search administrators...">
+                </div>
+                <div class="add-container">
+                    <button id="add-admin-btn">Add New Administrator</button>
+                </div>
+                <div class="admin-list">
+                    <ul id="administrators"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+    <script src="universite.js"></script>
+    <script src="admins.js"></script>
+</body>
+</html>

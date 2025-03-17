@@ -1,0 +1,237 @@
+/* General Styles for Reports Page */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f7fa;
+}
+
+/* Report Card Styles */
+.report-card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.report-header {
+    background-color: #1a5fa5;
+    color: white;
+    padding: 15px 20px;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.report-body {
+    padding: 20px;
+}
+
+.report-footer {
+    background-color: #f9f9f9;
+    padding: 12px 20px;
+    border-top: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Student Grade Table Styles */
+.student-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+.student-table th,
+.student-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.student-table th {
+    background-color: #f0f7ff;
+    color: #1a5fa5;
+    font-weight: 600;
+}
+
+.student-table tr:hover {
+    background-color: #f5f9ff;
+}
+
+/* Grade Badge Styles */
+.grade-a, .grade-b, .grade-c, .grade-d {
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+    display: inline-block;
+    text-align: center;
+}
+
+.grade-a {
+    background-color: #4caf50;
+    color: white;
+}
+
+.grade-b {
+    background-color: #8bc34a;
+    color: white;
+}
+
+.grade-c {
+    background-color: #ffeb3b;
+    color: black;
+}
+
+.grade-d {
+    background-color: #ff9800;
+    color: white;
+}
+
+/* Print Button */
+.print-report {
+    background-color: #1a5fa5;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.print-report:hover {
+    background-color: #0d4a8f;
+}
+
+/* Export Button */
+.export-report {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.export-report:hover {
+    background-color: #3d8b40;
+}
+
+/* Academic Report Button */
+#academic-report-btn {
+    background-color: #1a5fa5;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-right: 10px;
+}
+
+#academic-report-btn:hover {
+    background-color: #0d4a8f;
+}
+
+/* University Selection Window Styles */
+.university-selection-window {
+    padding: 20px;
+    background-color: #f5f7fa;
+}
+
+.university-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.university-card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    padding: 20px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.university-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+}
+
+.university-name {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1a5fa5;
+    margin: 0 0 5px 0;
+}
+
+.university-info {
+    color: #666;
+    font-size: 14px;
+}
+
+/* Student Report Styles */
+.student-report-container {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin-top: 20px;
+    padding: 20px;
+}
+
+.student-report-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.student-report-table th,
+.student-report-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.student-report-table th {
+    background-color: #1a5fa5;
+    color: white;
+    font-weight: 600;
+}
+
+.back-to-list {
+    background-color: #1a5fa5;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+.back-to-list:hover {
+    background-color: #0d4a8f;
+}
+
+/* Print Button */
+.print-university-report {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.print-university-report:hover {
+    background-color: #3d8b40;
+}
