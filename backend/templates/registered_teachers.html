@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registered Teachers</title>
+    <link rel="stylesheet" href="static/admin.css">
+</head>
+<body>
+    <div class="main-container">
+        <nav class="sidebar">
+            <ul>
+                <li><a href="index.html">Dashboard</a></li>
+                <li><a href="registered_students.html">Registered Students</a></li>
+                <li><a href="registered_teachers.html">Registered Teachers</a></li>
+                <li><a href="subjects.html">Subjects</a></li>
+            </ul>
+        </nav>
+        <div class="content">
+            <h1>Registered Teachers</h1>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Teacher Name</th>
+                        <th>Username</th>
+                        <th>Password</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for teacher in teachers %}
+                    <tr>
+                        <td>{{ teacher[1] }}</td>
+                        <td>{{ teacher[2] }}</td>
+                        <td>{{ teacher[3] }}</td>
+                        <td>
+                            <button class="delete-btn" onclick="deleteTeacher('{{ teacher[0] }}')">Delete</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <h2>Add New Teacher</h2>
+            <input type="text" id="teacherName" placeholder="Teacher Name">
+            <input type="text" id="teacherUsername" placeholder="Username">
+            <input type="password" id="teacherPassword" placeholder="Password">
+            <button onclick="addTeacher()">Add Teacher</button>
+        </div>
+    </div>
+
+    <script>
+        function addTeacher() {
+            let name = document.getElementById('teacherName').value;
+            let username = document.getElementById('teacherUsername').value;
+            let password = document.getElementById('teacherPassword').value;
+
+            fetch('/add_teacher', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, username, password })
+            }).then(() => location.reload());
+        }
+
+        function deleteTeacher(teacherId) {
+            fetch(`/delete_teacher/${teacherId}`, { method: 'DELETE' })
+                .then(() => location.reload());
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,240 @@
+/* Global Styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0f3460, #16213e, #533483);
+    animation: gradientShift 15s ease infinite;
+    color: #333;
+}
+
+/* Background Animation */
+@keyframes gradientShift {
+    0% {
+        background: linear-gradient(135deg, #0f3460, #16213e, #533483);
+    }
+
+    50% {
+        background: linear-gradient(135deg, #16213e, #533483, #0f3460);
+    }
+
+    100% {
+        background: linear-gradient(135deg, #0f3460, #16213e, #533483);
+    }
+}
+
+/* Container */
+.container {
+    display: flex;
+    justify-content: space-between;
+    width: 900px;
+    /* Slightly wider for better spacing */
+    height: 650px;
+    /* Slightly taller for content */
+    padding: 30px;
+    box-sizing: border-box;
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease;
+}
+
+.container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+}
+
+/* Left and Right Sections */
+.left-section,
+.right-section {
+    background: #f9f9f9;
+    /* Light gray for contrast */
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    overflow-y: auto;
+}
+
+.left-section {
+    width: 65%;
+    margin-right: 25px;
+}
+
+.right-section {
+    width: 35%;
+}
+
+/* Headings */
+h2 {
+    text-align: center;
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #16213e;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Student Name */
+.student-name {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 25px;
+    color: #0f3460;
+    text-align: center;
+    letter-spacing: 0.5px;
+}
+
+/* Table */
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+th,
+td {
+    padding: 15px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background: linear-gradient(135deg, #533483, #0f3460);
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+td {
+    font-size: 1rem;
+    background: rgba(255, 255, 255, 0.95);
+}
+
+tr:hover td {
+    background: rgba(83, 52, 131, 0.1);
+    transition: background 0.2s ease;
+}
+
+/* Select Dropdown */
+.subject-select {
+    width: 100%;
+    padding: 12px;
+    margin-top: 15px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    border: 2px solid #533483;
+    background: #fff;
+    color: #333;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.subject-select:focus {
+    outline: none;
+    border-color: #0f3460;
+    box-shadow: 0 0 6px rgba(15, 52, 96, 0.5);
+}
+
+/* Buttons */
+.button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 15px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/* Default Button Style (Add Subject) */
+.button {
+    background: linear-gradient(135deg, #2ecc71, #27ae60);
+}
+
+.button:hover {
+    background: linear-gradient(135deg, #27ae60, #2ecc71);
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Graduate Button Specific Style */
+#graduateBtn {
+    background: linear-gradient(135deg, #533483, #0f3460);
+}
+
+#graduateBtn:hover {
+    background: linear-gradient(135deg, #0f3460, #533483);
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Labels */
+label {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #16213e;
+    margin-top: 10px;
+    display: block;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        width: 95%;
+        height: auto;
+        padding: 20px;
+    }
+
+    .left-section,
+    .right-section {
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 20px;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+    }
+
+    .student-name {
+        font-size: 1.4rem;
+    }
+
+    th,
+    td {
+        font-size: 0.9rem;
+        padding: 12px;
+    }
+
+    .subject-select,
+    .button {
+        font-size: 1rem;
+        padding: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .student-name {
+        font-size: 1.2rem;
+    }
+
+    th,
+    td {
+        font-size: 0.8rem;
+        padding: 10px;
+    }
+}

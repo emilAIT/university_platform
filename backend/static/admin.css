@@ -1,0 +1,318 @@
+/* Global Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    /* Switched to your preferred font */
+}
+
+/* Body Styles */
+body {
+    background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460, #533483);
+    animation: gradientBG 12s ease infinite;
+    color: #333;
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+/* Background Animation */
+@keyframes gradientBG {
+    0% {
+        background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460, #533483);
+    }
+
+    50% {
+        background: linear-gradient(135deg, #533483, #0f3460, #16213e, #1a1a2e);
+    }
+
+    100% {
+        background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460, #533483);
+    }
+}
+
+/* Navbar Styles */
+.navbar {
+    background: rgba(15, 52, 96, 0.95);
+    /* Matches superadmin.css */
+    padding: 1.5rem 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+}
+
+.navbar ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    gap: 2.5rem;
+}
+
+.navbar a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 1.1rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.navbar a:hover {
+    background: rgba(83, 52, 131, 0.9);
+    transform: translateY(-2px);
+}
+
+.navbar a.active {
+    background: #4CAF50;
+    /* Green for active state */
+    color: #fff;
+    font-weight: 600;
+}
+
+/* Container Styles */
+.container {
+    display: flex;
+    max-width: 1300px;
+    /* Slightly wider */
+    margin: 2rem auto;
+    gap: 2rem;
+    padding: 0 1.5rem;
+}
+
+/* Column Styles */
+.column {
+    flex: 1;
+    background: #fff;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+}
+
+.column:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Headings */
+h1 {
+    color: #fff;
+    /* White to stand out on gradient background */
+    margin: 1.5rem 0 2rem;
+    font-size: 2.2rem;
+    font-weight: 600;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+h2 {
+    color: #16213e;
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Table Styles */
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-bottom: 1.5rem;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+th,
+td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background: linear-gradient(135deg, #533483, #0f3460);
+    /* Gradient header */
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+td {
+    font-size: 1rem;
+    background: rgba(255, 255, 255, 0.95);
+}
+
+tr:hover {
+    background: rgba(83, 52, 131, 0.1);
+    transition: background 0.2s ease;
+}
+
+tr.selected {
+    background: #3498db;
+    color: #fff;
+}
+
+/* Button Styles */
+.button,
+.show-btn,
+.delete-btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #fff;
+    transition: all 0.3s ease;
+}
+
+.button {
+    background: linear-gradient(135deg, #2ecc71, #27ae60);
+    /* Green gradient */
+}
+
+.button:hover {
+    background: linear-gradient(135deg, #27ae60, #2ecc71);
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.show-btn {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    /* Blue gradient */
+    margin-right: 0.75rem;
+}
+
+.show-btn:hover {
+    background: linear-gradient(135deg, #2980b9, #3498db);
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.delete-btn {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    /* Red gradient */
+}
+
+.delete-btn:hover {
+    background: linear-gradient(135deg, #c0392b, #e74c3c);
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.del-button {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+/* Input and Select Styles */
+input,
+select {
+    width: 100%;
+    padding: 0.75rem;
+    margin-bottom: 1.5rem;
+    border: 2px solid #533483;
+    border-radius: 8px;
+    font-size: 1rem;
+    background: #fff;
+    color: #333;
+    transition: all 0.3s ease;
+}
+
+input:focus,
+select:focus {
+    outline: none;
+    border-color: #0f3460;
+    box-shadow: 0 0 6px rgba(15, 52, 96, 0.5);
+}
+
+/* Section Styles */
+.section {
+    display: none;
+}
+
+.section.active {
+    display: block;
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        padding: 0 1rem;
+    }
+
+    .navbar {
+        padding: 1rem;
+    }
+
+    .navbar ul {
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem;
+    }
+
+    .navbar a {
+        font-size: 1rem;
+        padding: 0.5rem 1rem;
+    }
+
+    h1 {
+        font-size: 1.8rem;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+    }
+
+    th,
+    td {
+        font-size: 0.9rem;
+        padding: 0.75rem;
+    }
+
+    .button,
+    .show-btn,
+    .delete-btn {
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    h2 {
+        font-size: 1.3rem;
+    }
+
+    th,
+    td {
+        font-size: 0.8rem;
+        padding: 0.5rem;
+    }
+}
